@@ -1,0 +1,28 @@
+Bevins
+Copyright 2026 Tiffany Bridges
+
+This product includes software developed by third parties. Those components
+keep their own licenses. The Bevins project license (Apache-2.0) does not
+replace them.
+
+Image-origin checker (app/image-origin-v1/)
+--------------------------------------------
+
+Bevins code in this directory talks to a bundled C2PA runtime. The runtime
+and its dependencies are third-party software:
+
+  @contentauth/c2pa-web 0.15.5          MIT, Copyright 2025 Adobe
+  @contentauth/c2pa-wasm 0.13.4         MIT, Copyright 2025 Adobe
+  @contentauth/c2pa-utilities 0.3.3     MIT, Copyright 2025 Adobe
+  @contentauth/c2pa-types 0.7.7         MIT, Copyright 2025 Adobe
+      https://github.com/contentauth/c2pa-js
+
+  highgain 0.1.0                        ISC
+  ts-deepmerge 8.0.0                    ISC
+
+Full license texts, copyright lines, and the author metadata those packages
+ship are in:
+
+  app/image-origin-v1/THIRD-PARTY-NOTICES.txt
+
+Keep that file with any redistribution of the image-origin runtime.

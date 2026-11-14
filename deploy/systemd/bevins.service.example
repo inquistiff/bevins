@@ -1,0 +1,26 @@
+# Example systemd unit for the Bevins web app. Adjust paths/user to your host.
+[Unit]
+Description=Bevins server (scam-check + AI model router PWA)
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+User=bevins
+Group=bevins
+WorkingDirectory=/opt/bevins
+EnvironmentFile=/etc/bevins/bevins.env
+# Secrets are better supplied as systemd credentials than env vars, e.g.:
+# LoadCredential=bootstrap:/etc/bevins/creds/bootstrap
+# LoadCredential=scan_secret:/etc/bevins/creds/scan_secret
+# LoadCredential=server_llm:/etc/bevins/creds/server_llm
+ExecStart=/opt/bevins/.venv/bin/uvicorn app:asgi --host 127.0.0.1 --port 8099 --workers 2
+Restart=always
+RestartSec=2
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/opt/bevins
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,28 @@
+name: Feature request
+description: Suggest a capability, including prompt-injection defenses.
+title: "[feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    attributes:
+      label: Problem
+      description: Who hits this, and what they have to do today?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Proposal
+      description: What should Bevins do? Mention if this is about email, SMS, calls, voicemail, images, or attacks on AI assistants.
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Area
+      options:
+        - Scam detection
+        - Email forwarding
+        - Calls or voicemail
+        - Image provenance
+        - Prompt injection or AI-assistant attacks
+        - Accounts or privacy
+        - Something else

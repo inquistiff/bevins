@@ -1,0 +1,5 @@
+# Example Caddy site block. Replace bevins.example.com with your own domain.
+bevins.example.com {
+    encode zstd gzip
+    reverse_proxy 127.0.0.1:8099
+}
