@@ -1,6 +1,6 @@
 a2wsgi==1.10.10
 blinker==1.9.0
-certifi==2026.6.17
+certifi==2026.10.23
 cffi==2.1.0
 charset-normalizer==3.5.2
 click==8.4.2
