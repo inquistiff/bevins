@@ -11,8 +11,11 @@ idna==3.18
 itsdangerous==2.2.0
 Jinja2==3.1.6
 MarkupSafe==3.0.4
-psycopg==3.3.4
-psycopg-binary==3.3.4
+# Keep these two on the same release. psycopg 3.3.8 calls the C wait_c()
+# from psycopg-binary with a timeout argument. The 3.3.4 wheel's wait_c()
+# does not accept it, so every connection fails.
+psycopg==3.3.8
+psycopg-binary==3.3.8
 pycparser==3.12
 PyJWT==2.15.0
 requests==2.34.2
