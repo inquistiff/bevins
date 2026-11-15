@@ -1,0 +1,59 @@
+name: False positive or false negative
+description: A scrubbed example the scam checker got wrong.
+title: "[sample] "
+labels: ["sample"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Strip personal information before you submit.**
+
+        Remove real names, email addresses, phone numbers, account numbers, one-time codes, street addresses, government IDs, and photos of documents. Use placeholders such as `person@example.com` and `555-0100`.
+
+        Do not paste a live inbox, a full header set from a real person, or a screenshot that still shows personal data. If you cannot scrub the sample confidently, describe the pattern instead of pasting it.
+
+        This form is public. It is not for security vulnerabilities. Report those privately:
+        https://github.com/inquistiff/bevins/security/advisories/new
+  - type: checkboxes
+    attributes:
+      label: Redaction
+      options:
+        - label: I removed personal data, secrets, and real contact details. This sample is synthetic or fully redacted.
+          required: true
+        - label: I did not include a real one-time code, password, or payment number.
+          required: true
+  - type: dropdown
+    attributes:
+      label: What went wrong
+      options:
+        - False positive (a legitimate message was flagged)
+        - False negative (a scam was missed or rated too low)
+        - Advice was confusing or unsafe
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Channel
+      options:
+        - Email
+        - SMS or text
+        - Phone call or voicemail transcript
+        - Image
+        - Link
+        - Other
+  - type: textarea
+    attributes:
+      label: Redacted sample
+      description: Synthetic or fully stripped text only. No live personal data.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Verdict you saw
+      description: The risk level and the phrases Bevins quoted, if you have them.
+  - type: textarea
+    attributes:
+      label: What you expected
+      description: Why this should have been scored differently.
+    validations:
+      required: true

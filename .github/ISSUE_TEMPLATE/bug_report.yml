@@ -1,0 +1,38 @@
+name: Bug report
+description: Something in Bevins is broken or crashes.
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Security flaws belong in private vulnerability reporting, not here:
+        https://github.com/inquistiff/bevins/security/advisories/new
+
+        A wrong scam verdict, with the sample scrubbed, belongs in the false-positive / false-negative template.
+  - type: textarea
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what you saw. No secrets, credentials, or personal data.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: Use synthetic input. example.com addresses are fine.
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Version
+      description: Commit SHA or the date you copied the code.
+      placeholder: main @ 
+  - type: dropdown
+    attributes:
+      label: Area
+      options:
+        - Web app
+        - Image check
+        - Mail service
+        - Tests or docs
+        - Not sure

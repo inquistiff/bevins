@@ -1,0 +1,55 @@
+[Unit]
+Description=Bevins forwarding-mailbox scam service (scam@bevins.example.com)
+After=network-online.target bevins.service
+Wants=network-online.target
+Requires=bevins.service
+
+[Service]
+Type=simple
+User=bevinsmail
+Group=bevinsmail
+ExecStart=/usr/bin/python3 /opt/bevins/bevins_mail.py
+
+# --- config ---
+Environment=MAIL_ADDR=scam@bevins.example.com
+Environment=MAIL_DOMAIN=bevins.example.com
+Environment=APP_URL=http://127.0.0.1:8099
+Environment=LISTEN_HOST=0.0.0.0
+Environment=LISTEN_PORT=25
+Environment=DKIM_SELECTOR=bevins
+Environment=DKIM_KEY_PATH=%d/dkim_key
+
+# --- secrets (systemd creds, root-owned source, tmpfs at runtime) ---
+LoadCredential=scan_secret:/opt/bevins/creds.src/scan_secret
+LoadCredential=dkim_key:/opt/bevins/creds.src/dkim_private.pem
+
+# --- privilege: only the ability to bind port 25, nothing else ---
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+NoNewPrivileges=true
+
+# --- sandbox ---
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+RestrictAddressFamilies=AF_INET AF_INET6
+RestrictNamespaces=true
+RestrictRealtime=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+ReadWritePaths=/opt/bevins/mail
+
+# --- resilience ---
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

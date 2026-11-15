@@ -1,0 +1,3734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d1117">
+<title>Bevins · Smart Model Router</title>
+<link rel="manifest" href='data:application/json,{"name":"Bevins — Smart Model Router","short_name":"Bevins","start_url":".","display":"standalone","background_color":"%230d1117","theme_color":"%230d1117","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%235b8cff%22/%3E%3Ctext x=%2250%22 y=%2270%22 font-size=%2260%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22Arial%22%3EB%3C/text%3E%3C/svg%3E","sizes":"any","type":"image/svg+xml"}]}'>
+<style>
+  :root{--bg:#0d1117;--panel:#161b22;--panel2:#1c2330;--border:#2a3140;--text:#e6edf3;
+    --dim:#8b949e;--accent:#5b8cff;--good:#3fb950;--bad:#f85149;--warn:#d29922;--chip:#233047}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+       display:flex;flex-direction:column;height:100dvh;overflow:hidden}
+  header{display:flex;align-items:center;gap:.6rem;padding:.6rem 1rem;border-bottom:1px solid var(--border);background:var(--panel);flex:0 0 auto;flex-wrap:wrap}
+  .logo{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#5b8cff,#8a5bff);display:grid;place-items:center;font-weight:800;color:#fff}
+  header h1{font-size:1rem;margin:0;font-weight:650}
+  header .sub{color:var(--dim);font-size:.72rem}
+  .spacer{flex:1}
+  .hbtn{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:.4rem .7rem;font-size:.8rem;cursor:pointer}
+  .hbtn:hover{border-color:var(--accent)}
+  #install{display:none}
+  main{flex:1;display:flex;min-height:0}
+  .chatcol{flex:1;display:flex;flex-direction:column;min-width:0}
+  #feed{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.9rem}
+  .msg{max-width:760px;width:fit-content;padding:.7rem .9rem;border-radius:14px;line-height:1.5;font-size:.93rem;white-space:pre-wrap;word-wrap:break-word}
+  .user{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:4px}
+  .bot{align-self:flex-start;background:var(--panel);border:1px solid var(--border);border-bottom-left-radius:4px}
+  .bot .meta{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.5rem}
+  .tag{font-size:.68rem;padding:.15rem .45rem;border-radius:20px;background:var(--chip);color:#a9c2ff;border:1px solid var(--border);white-space:nowrap}
+  .tag.temp{color:#ffd7a8}.tag.cls{color:#a5f3c0}.tag.reg{color:#7ee787;border-color:#2ea043}
+  .why{font-size:.75rem;color:var(--dim);margin-top:.5rem;border-top:1px dashed var(--border);padding-top:.45rem}
+  .fb{display:flex;gap:.4rem;margin-top:.5rem}
+  .fb button{background:transparent;border:1px solid var(--border);color:var(--dim);border-radius:8px;padding:.2rem .5rem;cursor:pointer;font-size:.8rem}
+  .fb button:hover{border-color:var(--accent);color:var(--text)}
+  .fb button.on-up{border-color:var(--good);color:var(--good)}.fb button.on-down{border-color:var(--bad);color:var(--bad)}
+  .composer{flex:0 0 auto;display:flex;gap:.5rem;padding:.7rem;border-top:1px solid var(--border);background:var(--panel)}
+  #input{flex:1;resize:none;background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:.6rem .7rem;font-size:.92rem;font-family:inherit;max-height:130px}
+  #send{background:var(--accent);border:none;color:#fff;border-radius:10px;padding:0 1.1rem;font-weight:650;cursor:pointer}
+  #send:disabled{opacity:.5;cursor:default}
+  .router{flex:0 0 350px;border-left:1px solid var(--border);background:var(--panel);overflow-y:auto;padding:1rem}
+  .router h2{font-size:.78rem;text-transform:uppercase;letter-spacing:.8px;color:var(--dim);margin:.2rem 0 .7rem}
+  .rcard{background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:.8rem;margin-bottom:.9rem}
+  .rrow{display:flex;justify-content:space-between;font-size:.82rem;margin:.25rem 0;gap:.5rem}
+  .rrow .k{color:var(--dim)}
+  .arm{margin:.6rem 0}
+  .arm .top{display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:.2rem;gap:.4rem}
+  .arm .nm{font-weight:600}
+  .arm.chosen .nm{color:var(--accent)}
+  .arm .badge{font-size:.6rem;color:var(--dim);white-space:nowrap}
+  .bar{height:8px;border-radius:6px;background:#0d1117;overflow:hidden;position:relative}
+  .bar>span{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#3a5bd0,#5b8cff);border-radius:6px}
+  .bar>.draw{background:linear-gradient(90deg,#8a5bff,#c05bff);opacity:.55}
+  .small{font-size:.68rem;color:var(--dim);margin-top:.15rem}
+  .empty{color:var(--dim);font-size:.85rem;text-align:center;margin-top:2rem;line-height:1.7}
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:1rem;z-index:50}
+  .modal.open{display:flex}
+  .sheet{background:var(--panel);border:1px solid var(--border);border-radius:14px;max-width:960px;width:100%;max-height:88vh;overflow:auto;padding:1.2rem}
+  .sheet h3{margin:.2rem 0 .3rem}
+  table{border-collapse:collapse;width:100%;font-size:.78rem}
+  th,td{border:1px solid var(--border);padding:.4rem .5rem;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--dim);position:sticky;top:0}
+  .close{float:right;cursor:pointer;color:var(--dim);border:1px solid var(--border);border-radius:8px;padding:.2rem .55rem}
+  input[type=password]{width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:.5rem;font-size:.85rem;margin:.3rem 0 .6rem}
+  label{font-size:.8rem;color:var(--dim)}
+  .modenote{font-size:.72rem;color:var(--warn);margin-top:.3rem;line-height:1.5}
+  .pill{display:inline-block;font-size:.68rem;padding:.15rem .5rem;border-radius:20px;border:1px solid var(--border);color:var(--dim)}
+  .pill.live{color:var(--good);border-color:var(--good)}
+  .tabs{display:flex;gap:.5rem;margin:.6rem 0}
+  .tabs button{background:var(--panel2);border:1px solid var(--border);color:var(--dim);border-radius:8px;padding:.3rem .7rem;cursor:pointer;font-size:.8rem}
+  .tabs button.active{color:var(--text);border-color:var(--accent)}
+  .presets{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;padding:.55rem .7rem 0}
+  .chip{background:var(--panel2);border:1px solid var(--border);color:var(--dim);border-radius:20px;padding:.32rem .7rem;font-size:.78rem;cursor:pointer;white-space:nowrap}
+  .chip.active{color:#fff;background:var(--accent);border-color:var(--accent)}
+  .chip.shieldtog{margin-left:auto}
+  .chip.shieldtog.on{color:#7ee787;border-color:#2ea043}
+  .shieldline{align-self:flex-end;font-size:.7rem;color:var(--warn);margin:-.5rem .2rem .1rem;max-width:760px;text-align:right}
+  .tag.red{color:#ffb3b3;border-color:#a33}
+  .authdisc{font-size:.72rem;color:var(--warn);margin-top:.7rem;border-top:1px solid var(--border);padding-top:.6rem;line-height:1.4}
+  .enh,.trustcard{font-size:.74rem;border:1px solid var(--border);border-radius:10px;padding:.45rem .6rem;margin-top:.55rem;background:var(--panel2)}
+  .ehead,.tcline{color:var(--text)}
+  .tctoggle{color:var(--accent);cursor:pointer;font-size:.7rem;margin-left:.4rem}
+  .enhbody,.tcbody{display:none;margin-top:.45rem}
+  .enh.open .enhbody,.trustcard.open .tcbody{display:block}
+  .trustcard.warn{border-color:#7a5b20}
+  .msg.bot.emergency{background:#2d1417;border:2px solid #f85149;color:#ffd9d9;max-width:760px;font-size:.98rem;line-height:1.55;font-weight:500}
+  .tcrow{display:flex;justify-content:space-between;gap:.6rem;margin:.22rem 0;color:var(--dim)}
+  .tcrow b{color:var(--text);text-align:right;font-weight:600}
+  .tcwarn{color:#ffb3b3;margin:.4rem 0;line-height:1.45}
+  .tcdrift{color:#a9c2ff;margin:.3rem 0}
+  .tctips{margin-top:.5rem;border-top:1px dashed var(--border);padding-top:.4rem;color:var(--dim);line-height:1.5}
+  #authGate{position:fixed;inset:0;z-index:200;background:radial-gradient(1200px 600px at 50% -10%,#16233f,#0d1117);display:none;align-items:center;justify-content:center;padding:1rem}
+  #authGate.show{display:flex}
+  .authcard{width:100%;max-width:400px;background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:1.4rem}
+  .authcard .logo{width:44px;height:44px;border-radius:12px;font-size:1.4rem;margin:0 auto .6rem}
+  .authcard h2{text-align:center;margin:.2rem 0 .1rem;font-size:1.25rem}
+  .authcard .tag2{text-align:center;color:var(--dim);font-size:.8rem;margin-bottom:1rem}
+  .authtabs{display:flex;gap:.4rem;margin-bottom:.8rem}
+  .authtabs button{flex:1;background:var(--panel2);border:1px solid var(--border);color:var(--dim);border-radius:8px;padding:.45rem;cursor:pointer;font-size:.85rem}
+  .authtabs button.active{color:#fff;border-color:var(--accent);background:var(--accent)}
+  .authcard input{width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:.6rem;font-size:.9rem;margin:.35rem 0}
+  .authbtn{width:100%;background:var(--accent);border:none;color:#fff;border-radius:8px;padding:.6rem;font-weight:650;cursor:pointer;margin-top:.4rem}
+  .authmsg{color:#ffb3b3;font-size:.78rem;min-height:1.1em;margin:.3rem 0;text-align:center}
+  .ssorow{display:flex;flex-direction:column;gap:.4rem;margin-top:.8rem}
+  .ssobtn{display:flex;align-items:center;justify-content:center;gap:.5rem;border:1px solid var(--border);background:#fff;color:#111;border-radius:8px;padding:.55rem;cursor:pointer;font-weight:600;font-size:.85rem}
+  .ssobtn.apple{background:#000;color:#fff;border-color:#000}
+  .ssobtn.ms{background:#fff;color:#111}
+  .authdiv{text-align:center;color:var(--dim);font-size:.72rem;margin:.8rem 0 .2rem}
+  .whoami{color:var(--dim);font-size:.72rem;margin:0 .35rem;white-space:nowrap}
+  @media(max-width:820px){.router{display:none}.msg{max-width:100%}}
+  /* ---- Accessibility & readability (Phase 3 · built for a 60+ non-expert) ---- */
+  html{font-size:17px}
+  @media(max-width:820px){html{font-size:16px}}
+  .msg{font-size:1rem;line-height:1.55}
+  .tag,.pill{font-size:.8rem}
+  .small,.why,.authdiv,.whoami,.modenote,.authdisc,.shieldline,.tag2,.authmsg,.enhbody .small{font-size:.82rem !important}
+  .arm .badge{font-size:.75rem}
+  .enh,.trustcard{font-size:.86rem}
+  .tctoggle,.tctips,.tcrow{font-size:.82rem}
+  .rrow{font-size:.9rem}
+  .chip,.fb button,.hbtn,.tabs button,.authcard input,label,.close{font-size:.9rem}
+  #input,input[type=password],.authcard input,.authtabs button{font-size:1rem}   /* ≥16px avoids iOS auto-zoom */
+  /* touch targets ≥44px */
+  .hbtn,#send,.fb button,.close,.chip,.tabs button,.authtabs button,.authbtn,.ssobtn{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+  /* visible keyboard focus for everyone who tabs */
+  a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus-visible,.chip:focus-visible,.close:focus-visible,.tctoggle:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+  .fontctl{display:inline-flex;gap:.2rem}
+  .fontctl button{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:8px;min-width:34px;min-height:34px;cursor:pointer;font-weight:700;line-height:1}
+  .copybtn{background:transparent;border:1px solid var(--border);color:var(--dim);border-radius:8px;padding:.2rem .5rem;cursor:pointer;font-size:.82rem;min-height:38px}
+  .copybtn:hover{border-color:var(--accent);color:var(--text)}
+  .exwrap{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin:.5rem auto;max-width:640px}
+  .exchip{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:22px;padding:.5rem .9rem;cursor:pointer;font-size:.92rem;min-height:44px}
+  .exchip:hover{border-color:var(--accent)}
+  .typing{display:inline-flex;gap:.35rem;align-items:center;color:var(--dim)}
+  .typing .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:tpulse 1.2s infinite}
+  .typing .dot:nth-child(2){animation-delay:.2s}.typing .dot:nth-child(3){animation-delay:.4s}
+  @keyframes tpulse{0%,60%,100%{opacity:.25}30%{opacity:1}}
+  /* ---- Light theme (opt-in toggle + honors OS preference) ---- */
+  body.light{--bg:#f5f8fc;--panel:#ffffff;--panel2:#eef2f8;--border:#d2dae6;--text:#182130;--dim:#586274;--accent:#2f6fe0;--good:#1a7f37;--bad:#c62f2a;--warn:#8a6100;--chip:#e6eefb}
+  body.light .tag{color:#2952aa}
+  body.light .tag.temp{color:#9a5b00}body.light .tag.cls{color:#1a7f4f}
+  body.light .bar{background:#dde5f0}
+  body.light .msg.bot.emergency{background:#fff1f1;border-color:#c62f2a;color:#7c1d1a}
+  body.light #authGate{background:radial-gradient(1200px 600px at 50% -10%,#dbe7ff,#f5f8fc)}
+  body.light .tcwarn,body.light .tag.red{color:#b32320}
+  body.light .ssobtn{border-color:#c9d2e0}
+  body.light #input,body.light .authcard input,body.light input[type=password]{background:#fff}
+  .themebtn{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:8px;min-width:40px;min-height:40px;cursor:pointer;font-size:1rem}
+  /* mobile: collapse the crowded header */
+  @media(max-width:600px){header h1 .sub{display:none}.hbtn{padding:.4rem .55rem}#feed{padding:.7rem}.presets{flex-wrap:nowrap;overflow-x:auto;flex-shrink:0;padding-bottom:.5rem}.presets .chip{flex-shrink:0}}
+  .iosnudge{display:none;background:var(--panel2);border:1px solid var(--accent);border-radius:10px;padding:.6rem .85rem;margin:.5rem 1rem 0;font-size:.86rem;color:var(--text);align-items:center;gap:.5rem}
+  .iosnudge.show{display:flex}
+  .iosnudge button{margin-left:auto;background:transparent;border:1px solid var(--border);color:var(--dim);border-radius:8px;min-height:36px;padding:0 .7rem;cursor:pointer;white-space:nowrap}
+  .attachrow{padding:0 .7rem}
+  .attpill{display:inline-flex;align-items:center;gap:.35rem;background:var(--panel2);border:1px solid var(--accent);border-radius:20px;padding:.35rem .7rem;font-size:.84rem;margin-bottom:.35rem}
+  .attpill button{background:transparent;border:none;color:var(--dim);cursor:pointer;min-height:28px;font-size:.95rem;padding:0 .2rem}
+  .attachbtn{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:10px;min-width:46px;min-height:44px;cursor:pointer;font-size:1.15rem;flex:0 0 auto}
+  .attachbtn:hover{border-color:var(--accent)}
+  .micbtn.listening{background:var(--bad);border-color:var(--bad);color:#fff;animation:micpulse 1.1s ease-in-out infinite}
+  @keyframes micpulse{0%,100%{box-shadow:0 0 0 0 rgba(248,81,73,.55)}50%{box-shadow:0 0 0 7px rgba(248,81,73,0)}}
+  .msg.bot .mdh{margin:.55rem 0 .2rem;font-size:1.02em}
+  .msg.bot .mdh:first-child{margin-top:0}
+  .msg.bot ul{margin:.25rem 0 .5rem;padding-left:1.35rem}
+  .msg.bot li{margin:.18rem 0}
+  .msg.bot .mdsp{height:.5rem}
+  .msg.bot .mdcode{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:.6rem .75rem;overflow-x:auto;white-space:pre;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em;margin:.4rem 0}
+  .msg.bot code{background:var(--panel2);border:1px solid var(--border);border-radius:5px;padding:.05rem .3rem;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em}
+  .msg.bot a{color:var(--accent);text-decoration:underline}
+  /* BEV_UX_V1: bot replies carry long unbroken strings (URLs, keys, IDs) and a
+     narrow phone column used to scroll sideways instead of wrapping them. */
+  .msg.bot{overflow-wrap:anywhere}
+  .origin-note{font-size:1em;line-height:1.5;color:var(--text);margin-top:.5rem}
+
+.origin-body {white-space:normal}
+.origin-body p {margin:.55em 0}
+.origin-body h3 {font-size:1.05em;line-height:1.35;margin:.5em 0}
+.origin-body .origin-scope {font-weight:650}
+.origin-action {border-left:3px solid var(--dim);padding-left:.7em;margin:.7em 0}
+.origin-body button {font:inherit;min-height:44px;padding:.45em .7em;max-width:100%;white-space:normal;cursor:pointer;margin:.3em .4em .3em 0}
+.origin-limit {color:var(--dim)}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+<header>
+  <div class="logo">B</div>
+  <div><h1>Bevins <span class="sub">smart model router</span></h1></div>
+  <div class="spacer"></div>
+  <span class="fontctl" role="group" aria-label="Text size">
+    <button onclick="setFont(-1)" aria-label="Smaller text" title="Smaller text">A−</button>
+    <button onclick="setFont(1)" aria-label="Larger text" title="Larger text">A+</button>
+  </span>
+  <button class="themebtn" id="themeBtn" onclick="toggleTheme()" title="Light or dark mode" aria-label="Toggle light or dark mode">☀️</button>
+  <span id="mode" class="pill">Preview</span>
+  <button class="hbtn" onclick="newChat()">✚ New chat</button>
+  <button class="hbtn" onclick="openHistory()">History</button>
+  <button class="hbtn" id="install">Install</button>
+  <button class="hbtn" onclick="openGuide()">Guide</button>
+  <button class="hbtn" onclick="openMatrix()">Matrix</button>
+  <button class="hbtn" onclick="openSettings()">Settings</button>
+  <span id="who" class="whoami"></span>
+  <button class="hbtn" id="adminInvite" style="display:none" onclick="openInvite()">Invite</button>
+  <button class="hbtn" id="logoutBtn" style="display:none" onclick="logout()">Log out</button>
+</header>
+<div class="iosnudge" id="iosNudge">📲 Add Bevins to your Home Screen: tap <b>Share</b>, then <b>“Add to Home Screen.”</b><button onclick="dismissIos()">Got it</button></div>
+<div id="authGate" class="show">
+  <div class="authcard">
+    <div class="logo" style="background:linear-gradient(135deg,#5b8cff,#8a5bff);display:grid;place-items:center;font-weight:800;color:#fff">B</div>
+    <h2>Bevins</h2>
+    <div class="tag2">scam checks and an AI assistant — sign in to your account</div>
+    <div class="authtabs"><button id="tabSignin" class="active" onclick="authTab('signin')">Sign in</button><button id="tabSignup" onclick="authTab('signup')">Create account</button></div>
+    <input type="email" id="authEmail" placeholder="you@example.com" autocomplete="username" inputmode="email">
+    <div style="position:relative">
+      <input type="password" id="authPass" placeholder="Password (8+ characters)" autocomplete="current-password" oninput="pwStrength()" style="padding-right:3.4rem">
+      <button type="button" id="pwToggle" onclick="togglePw()" aria-label="Show password" style="position:absolute;right:.4rem;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--dim);cursor:pointer;font-size:.82rem;min-height:38px;padding:0 .3rem">Show</button>
+    </div>
+    <div class="small" id="pwHint" style="text-align:left;min-height:1em;margin:-.1rem 0 .2rem"></div>
+    <input type="text" id="authInvite" placeholder="Invite code (for new accounts)" style="display:none">
+    <input type="text" id="authSetup" placeholder="Setup code (first account only)" style="display:none">
+    <div class="authmsg" id="authMsg"></div>
+    <button class="authbtn" id="authGo" onclick="authSubmit()">Sign in</button>
+    <div class="authdiv">or continue with</div>
+    <div class="ssorow">
+      <button class="ssobtn apple" onclick="ssoSignin('Apple')"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 12.5c-.03-2.7 2.2-4 2.3-4.06-1.25-1.84-3.2-2.09-3.9-2.12-1.66-.17-3.24.98-4.08.98-.84 0-2.14-.96-3.52-.93-1.81.03-3.48 1.05-4.41 2.67-1.88 3.27-.48 8.1 1.35 10.76.9 1.3 1.97 2.76 3.38 2.71 1.36-.05 1.87-.88 3.51-.88 1.64 0 2.1.88 3.53.85 1.46-.03 2.38-1.32 3.27-2.63.68-1.02.96-1.58 1.5-2.72-3.94-1.5-3.44-5.16-3.41-5.24zM14.62 4.6c.75-.9 1.25-2.16 1.11-3.42-1.07.04-2.37.71-3.14 1.62-.69.8-1.29 2.08-1.13 3.31 1.19.09 2.41-.61 3.16-1.51z"/></svg> Sign in with Apple</button>
+      <button class="ssobtn" onclick="ssoSignin('Google')"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> Sign in with Google</button>
+      <button class="ssobtn ms" onclick="ssoSignin('Microsoft')"><svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path fill="#F25022" d="M1 1h10v10H1z"/><path fill="#7FBA00" d="M13 1h10v10H13z"/><path fill="#00A4EF" d="M1 13h10v10H1z"/><path fill="#FFB900" d="M13 13h10v10H13z"/></svg> Sign in with Microsoft</button>
+    </div>
+    <label id="agreeRow" style="display:none;font-size:.72rem;color:var(--dim);margin-top:.7rem;line-height:1.4;cursor:pointer">
+      <input type="checkbox" id="authAgree" style="width:auto;margin-right:.4rem;vertical-align:middle"> I will use Bevins lawfully, and I accept the terms below.
+    </label>
+    <div class="authdisc">Open-source scam check. A self-hosted copy may require an invite code. <span class="tctoggle" onclick="document.getElementById('termsBox').style.display=document.getElementById('termsBox').style.display==='block'?'none':'block'">terms</span>
+      <div id="termsBox" style="display:none;margin-top:.4rem;color:var(--dim);line-height:1.5">
+        Bevins is provided <b>“as is,” for lawful use only, with no warranty of any kind</b>. You are responsible for how you use it and its outputs. Operators of a self-hosted copy accept no liability for that copy. Outputs are not professional medical, legal, or financial advice. Do not use Bevins to harass or harm anyone. If you or someone else is in crisis, call 911 or 988.
+      </div>
+    </div>
+  </div>
+</div>
+<main>
+  <div class="chatcol">
+    <div id="feed" role="log" aria-live="polite" aria-relevant="additions">
+      <div class="empty" id="emptyState">
+        👋 Ask anything — Bevins reads what you need, then picks the best AI model <i>and</i> the right settings automatically.<br><br>
+        <b>Tap one to try:</b><br>
+        <div class="exwrap">
+          <button class="exchip" onclick="exFill('Write a warm thank-you email to a client for their business.')">✍️ Write a thank-you email</button>
+          <button class="exchip" onclick="exFill('What is in the news today?')">🔎 What's in the news?</button>
+          <button class="exchip" onclick="exFill('Explain what my cholesterol numbers mean in plain language.')">🩺 Explain my cholesterol</button>
+          <button class="exchip" onclick="exFill('Is this email a scam? Paste it and I will check.')">🕵️ Check if something's a scam</button>
+        </div><br>
+        Bevins starts from a curated model roster. Benchmarks and prices go stale, so confirm them with the provider. Running in <b>Preview</b> — add a key in Settings for real answers.
+      </div>
+    </div>
+    <div class="presets" id="presets" role="group" aria-label="Bevins modes; scroll for more"></div>
+    <div id="attachChip" class="attachrow"></div>
+    <div class="composer">
+      <button class="attachbtn" id="attachBtn" onclick="document.getElementById('fileInput').click()" title="Attach a document or photo" aria-label="Attach a document or photo">📎</button>
+      <input type="file" id="fileInput" accept=".pdf,.txt,.md,.csv,image/*" style="display:none">
+      <button class="attachbtn micbtn" id="micBtn" onclick="toggleMic()" title="Speak your question" aria-label="Speak your question" style="display:none">🎤</button>
+      <textarea id="input" rows="1" placeholder="Ask anything… or attach a document / photo"></textarea>
+      <button id="send">Send</button>
+    </div>
+  </div>
+  <aside class="router">
+    <h2>Router — live</h2>
+    <div id="routerBody"><div class="empty" style="margin-top:1rem">The router shows its thinking here after your first message.</div></div>
+  </aside>
+</main>
+
+<div class="modal" id="historyModal">
+  <div class="sheet" style="max-width:640px">
+    <span class="close" onclick="closeModal('historyModal')">✕</span>
+    <h3 style="margin-top:0">Your recent conversations</h3>
+    <div class="small">Saved on this device only — for your privacy, nothing is stored on our servers.</div>
+    <div id="historyList"></div>
+  </div>
+</div>
+<div class="modal" id="guideModal">
+  <div class="sheet" style="max-width:640px">
+    <span class="close" onclick="closeModal('guideModal')">✕</span>
+    <h3>Guide &amp; what's new</h3>
+    <div class="tabs"><button id="gTabGuide" class="active" onclick="guideTab('guide')">How to use</button><button id="gTabNew" onclick="guideTab('new')">What's new</button><button id="gTabFaq" onclick="guideTab('faq')">FAQ</button></div>
+    <div id="guideBody"></div>
+  </div>
+</div>
+
+<div class="modal" id="matrixModal">
+  <div class="sheet">
+    <span class="close" onclick="closeModal('matrixModal')">✕</span>
+    <h3>Model matrix <span id="matrixMeta" style="font-weight:400;color:var(--dim);font-size:.75rem"></span></h3>
+    <div class="tabs">
+      <button id="tabLLM" class="active" onclick="showTab('llm')">Text models</button>
+      <button id="tabGen" onclick="showTab('gen')">Generative (image/video/audio)</button>
+    </div>
+    <div id="matrixTableWrap"></div>
+  </div>
+</div>
+
+<div class="modal" id="settingsModal">
+  <div class="sheet" style="max-width:460px">
+    <span class="close" onclick="closeModal('settingsModal')">✕</span>
+    <h3>Settings</h3>
+    <label>OpenRouter key <span style="color:var(--dim)">— breadth: 400+ models, and the only path for health</span></label>
+    <input type="password" id="keyOR" placeholder="sk-or-v1-…">
+    <label>Fireworks.ai key <span style="color:var(--dim)">— open models</span></label>
+    <input type="password" id="keyFW" placeholder="fw_…">
+    <label>Together.ai key <span style="color:var(--dim)">— open models</span></label>
+    <input type="password" id="keyTG" placeholder="tok_…">
+    <div class="modenote">Keys stay in this browser tab only (in memory), sent only to their own provider, gone when you close the tab. Production holds keys on a server. The router calls the <b>lowest-cost healthy provider</b> for each chosen model — but <b>health</b> content only ever goes to HIPAA-capable providers via OpenRouter, never Fireworks/Together.</div>
+    <button class="hbtn" onclick="saveKeys()">Save keys</button>
+    <button class="hbtn" onclick="clearKeys()">Clear</button>
+    <hr style="border-color:var(--border);margin:1rem 0">
+    <h3 style="font-size:.95rem">🩺 Health history</h3>
+    <div class="modenote" id="phrState">Locked. Set a passphrase to save lab results on this device (encrypted — we can't see or recover it).</div>
+    <input type="password" id="phrPass" placeholder="Health passphrase…">
+    <button class="hbtn" onclick="phrUnlock()">Unlock / set</button>
+    <button class="hbtn" onclick="openTimeline()">View timeline</button>
+    <button class="hbtn" onclick="phrLock()">Lock</button>
+    <button class="hbtn" style="border-color:#a33;color:#ffb3b3" onclick="phrDeleteAll()">Delete all</button>
+    <hr style="border-color:var(--border);margin:1rem 0">
+    <button class="hbtn" onclick="location.reload()">Reset the router's learning</button>
+  </div>
+</div>
+
+<div class="modal" id="timelineModal">
+  <div class="sheet" style="max-width:640px">
+    <span class="close" onclick="closeModal('timelineModal')">✕</span>
+    <h3>🩺 Health history <span style="font-weight:400;color:var(--dim);font-size:.75rem">on this device · encrypted</span></h3>
+    <div style="margin:.3rem 0 .8rem"><button class="hbtn" onclick="phrExport()">Export (for your doctor)</button></div>
+    <div id="timelineBody"><div class="empty">Nothing saved yet. Review a lab report in Health mode, then tap “Save to my health history.”</div></div>
+    <div class="modenote" style="margin-top:1rem">Informational only — not medical advice. Values reflect the documents you saved. Stored only on this device; lost if you clear your browser or forget the passphrase.</div>
+  </div>
+</div>
+
+<div class="modal" id="inviteModal">
+  <div class="sheet" style="max-width:440px">
+    <span class="close" onclick="closeModal('inviteModal')">✕</span>
+    <h3>Invite someone</h3>
+    <div class="modenote">Each invited person gets a <b>separate account</b>. Their chats, keys, and health history stay separate from yours.</div>
+    <input type="email" id="inviteEmail" placeholder="them@example.com" style="width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:.5rem;margin:.5rem 0">
+    <button class="hbtn" onclick="makeInvite()">Create invite</button>
+    <div id="inviteOut" style="margin-top:.7rem;font-size:.82rem"></div>
+    <div id="inviteList" style="margin-top:.8rem;font-size:.78rem;color:var(--dim)"></div>
+  </div>
+</div>
+
+<script id="matrixData" type="application/json">{
+ "generated_from": "Bevins model matrices (LLM schema v3 + GenAI 1.0-genai)",
+ "snapshot_date": "2026-07-19T05:35:34.039443+00:00",
+ "providerTiers": {
+  "openai": "regulated_ready",
+  "anthropic": "regulated_ready",
+  "gemini": "confidential",
+  "google": "confidential",
+  "vertex": "regulated_ready",
+  "meta": "public_only",
+  "xai": "regulated_ready",
+  "microsoft": "regulated_ready",
+  "azure": "regulated_ready",
+  "amazon": "regulated_ready",
+  "bedrock": "regulated_ready",
+  "nvidia": "public_only",
+  "openrouter": "confidential",
+  "groq": "regulated_ready",
+  "cerebras": "confidential",
+  "together": "confidential",
+  "mistral": "confidential",
+  "cohere": "public_only",
+  "watsonx": "regulated_ready",
+  "ibm": "regulated_ready",
+  "perplexity": "confidential",
+  "ai2": "self_host",
+  "olmo": "self_host",
+  "reka": "internal",
+  "liquid": "self_host",
+  "nous": "public_only",
+  "thinking machines": "internal",
+  "falcon": "self_host",
+  "tii": "self_host",
+  "exaone": "self_host",
+  "lg": "self_host",
+  "hyperclova": "public_only",
+  "naver": "public_only",
+  "sarvam": "internal",
+  "rakuten": "self_host",
+  "deepseek": "public_only",
+  "alibaba": "confidential",
+  "qwen": "confidential",
+  "moonshot": "public_only",
+  "zhipu": "internal",
+  "z.ai": "internal",
+  "minimax": "public_only",
+  "byteplus": "confidential",
+  "bytedance": "confidential",
+  "baidu": "public_only",
+  "tencent": "internal",
+  "stepfun": "public_only",
+  "internlm": "public_only",
+  "meituan": "public_only",
+  "iflytek": "public_only",
+  "xiaomi": "internal",
+  "inclusionai": "public_only"
+ },
+ "llms": [
+  {
+   "id": "gpt-5-6-sol",
+   "name": "Gpt 5 6 Sol",
+   "creator": "OpenAI",
+   "provTier": "regulated_ready",
+   "tierClass": "frontier",
+   "inM": 5.0,
+   "outM": 30.0,
+   "elo": 1486,
+   "swe": 64.6,
+   "term": 88.8,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 1000000,
+   "standout": "Current OpenAI flagship. SOTA Terminal-Bench 2.1 (91.9 ultra) but trails Claude Fable 5 on SWE-Bench Pro (64.6 vs 80.3).",
+   "bestfor": "Best for: writing and email, coding, search and research. Confirm current fit with the provider.",
+   "serving": [
+    "direct API",
+    "OpenRouter",
+    "Codex",
+    "ChatGPT",
+    "Cerebras"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "gpt-5-6-terra",
+   "name": "Gpt 5 6 Terra",
+   "creator": "OpenAI",
+   "provTier": "regulated_ready",
+   "tierClass": "mid",
+   "inM": 2.5,
+   "outM": 15.0,
+   "elo": null,
+   "swe": 63.4,
+   "term": 87.4,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 1000000,
+   "standout": "Beats GPT-5.5 on SWE-Bench Pro (63.4 vs 58.6).",
+   "bestfor": "Best for: writing and email, coding. Confirm current fit with the provider.",
+   "serving": [
+    "direct API",
+    "OpenRouter",
+    "Codex",
+    "ChatGPT"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "gpt-5-6-luna",
+   "name": "Gpt 5 6 Luna",
+   "creator": "OpenAI",
+   "provTier": "regulated_ready",
+   "tierClass": "small",
+   "inM": 1.0,
+   "outM": 6.0,
+   "elo": null,
+   "swe": 62.7,
+   "term": 84.7,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 1000000,
+   "standout": "Near-frontier agentic coding (62.7 SWE-Bench Pro).",
+   "bestfor": "Best for: coding. Confirm current fit with the provider.",
+   "serving": [
+    "direct API",
+    "OpenRouter",
+    "Codex",
+    "ChatGPT"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "gpt-5-5-pro",
+   "name": "Gpt 5 5 Pro",
+   "creator": "OpenAI",
+   "provTier": "regulated_ready",
+   "tierClass": "frontier",
+   "inM": 30.0,
+   "outM": 180.0,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 1000000,
+   "standout": "Still OpenAI's premium high-compute tier as of 2026-07-19.",
+   "bestfor": "Best for: general questions. Confirm current fit with the provider.",
+   "serving": [
+    "direct API",
+    "OpenRouter",
+    "ChatGPT Pro"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "gpt-5-5",
+   "name": "Gpt 5 5",
+   "creator": "OpenAI",
+   "provTier": "regulated_ready",
+   "tierClass": "frontier",
+   "inM": 5.0,
+   "outM": 30.0,
+   "elo": 1482,
+   "swe": 58.6,
+   "term": null,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 1000000,
+   "standout": "April 2026 flagship, still active and the official migration target for o3/GPT-4/GPT-5 shutdowns.",
+   "bestfor": "Best for: general questions. Confirm current fit with the provider.",
+   "serving": [
+    "direct API",
+    "OpenRouter",
+    "Codex",
+    "ChatGPT"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "gpt-oss-20b",
+   "name": "Gpt Oss 20B",
+   "creator": "OpenAI",
+   "provTier": "regulated_ready",
+   "tierClass": "small",
+   "inM": 0.03,
+   "outM": 0.14,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": false,
+   "ctx": 128000,
+   "standout": "writing and email, self-hosting. Confirm current fit with the provider.",
+   "bestfor": "Best for: writing and email, self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "open weights (HF)",
+    "OpenRouter",
+    "local (Ollama/llama.cpp/LM Studio)"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "claude-fable-5",
+   "name": "Claude Fable 5",
+   "creator": "Anthropic",
+   "provTier": "regulated_ready",
+   "tierClass": "frontier",
+   "inM": 10.0,
+   "outM": 50.0,
+   "elo": 1507,
+   "swe": 80.3,
+   "term": 84.3,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 1000000,
+   "standout": "Described as a general-use Mythos-class model. Arena rank #1 in the July 2026 roster snapshot.",
+   "bestfor": "Best for: coding, search and research. Confirm current fit with the provider.",
+   "serving": [
+    "direct API",
+    "OpenRouter",
+    "Claude apps / Claude Code"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "claude-sonnet-5",
+   "name": "Claude Sonnet 5",
+   "creator": "Anthropic",
+   "provTier": "regulated_ready",
+   "tierClass": "mid",
+   "inM": 3.0,
+   "outM": 15.0,
+   "elo": 1461,
+   "swe": 63.2,
+   "term": 80.4,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 1000000,
+   "standout": "general questions. Confirm current fit with the provider.",
+   "bestfor": "Best for: general questions. Confirm current fit with the provider.",
+   "serving": [
+    "direct API",
+    "Claude apps (all plans incl. Free)",
+    "Claude Code"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "gemini-3-1-pro",
+   "name": "Gemini 3 1 Pro",
+   "creator": "Google",
+   "provTier": "confidential",
+   "tierClass": "frontier",
+   "inM": 2.0,
+   "outM": 12.0,
+   "elo": 1485,
+   "swe": 54.2,
+   "term": null,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 1000000,
+   "standout": "Google's current Pro flagship (still 'Preview'). Gemini 3.5 Pro rumored imminent (~July 2026).",
+   "bestfor": "Best for: search and research, reasoning. Confirm current fit with the provider.",
+   "serving": [
+    "direct API (AI Studio)",
+    "Vertex",
+    "Gemini CLI",
+    "Gemini app"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "gemini-3-flash",
+   "name": "Gemini 3 Flash",
+   "creator": "Google",
+   "provTier": "confidential",
+   "tierClass": "small",
+   "inM": 0.5,
+   "outM": 3.0,
+   "elo": 1473,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 1000000,
+   "standout": "Default model in the consumer Gemini app.",
+   "bestfor": "Best for: images or audio. Confirm current fit with the provider.",
+   "serving": [
+    "direct API (AI Studio)",
+    "Vertex",
+    "OpenRouter",
+    "Gemini app (default model)",
+    "Gemini CLI"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "muse-spark-1-1",
+   "name": "Muse Spark 1 1",
+   "creator": "Meta",
+   "provTier": "public_only",
+   "tierClass": "frontier",
+   "inM": 1.25,
+   "outM": 4.25,
+   "elo": 1493,
+   "swe": 61.5,
+   "term": null,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 1000000,
+   "standout": "Meta's first paid, closed-weight frontier model \u2014 the moment Meta started monetizing AI directly.",
+   "bestfor": "Best for: search and research. Confirm current fit with the provider.",
+   "serving": [
+    "Meta Model API (OpenAI-compatible)",
+    "meta.ai",
+    "Meta AI app (Thinking mode)",
+    "partners: Replit, Cline, Box"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "muse-spark",
+   "name": "Muse Spark",
+   "creator": "Meta",
+   "provTier": "public_only",
+   "tierClass": "frontier",
+   "inM": null,
+   "outM": null,
+   "elo": 1487,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 0,
+   "standout": "First Meta model ever released without open weights \u2014 successor to Llama 4 Maverick at ~10x less training compute.",
+   "bestfor": "Best for: self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "meta.ai",
+    "Meta AI app",
+    "Facebook/Instagram/Threads assistant"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "grok-4-5",
+   "name": "Grok 4 5",
+   "creator": "xAI",
+   "provTier": "regulated_ready",
+   "tierClass": "frontier",
+   "inM": 2.0,
+   "outM": 6.0,
+   "elo": 1465,
+   "swe": 64.7,
+   "term": 83.3,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 500000,
+   "standout": "Opus-class coding/agentic claim with best-in-class token efficiency \u2014 but trails Fable 5 on headline benchmarks.",
+   "bestfor": "Best for: coding. Confirm current fit with the provider.",
+   "serving": [
+    "direct API (xAI console)",
+    "Grok Build",
+    "Cursor",
+    "OpenRouter"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "grok-4-3",
+   "name": "Grok 4 3",
+   "creator": "xAI",
+   "provTier": "regulated_ready",
+   "tierClass": "mid",
+   "inM": 1.25,
+   "outM": 2.5,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 1000000,
+   "standout": "xAI's 1M-context workhorse that consolidated eight retired models (incl. grok-4-fast) into one configurable-reasoning slug.",
+   "bestfor": "Best for: reasoning, long documents. Confirm current fit with the provider.",
+   "serving": [
+    "direct API (xAI)",
+    "grok.com",
+    "Grok apps"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "grok-build-0-1",
+   "name": "Grok Build 0 1",
+   "creator": "xAI",
+   "provTier": "regulated_ready",
+   "tierClass": "small",
+   "inM": 1.0,
+   "outM": 2.0,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": false,
+   "ctx": 256000,
+   "standout": "coding, search and research. Confirm current fit with the provider.",
+   "bestfor": "Best for: coding, search and research. Confirm current fit with the provider.",
+   "serving": [
+    "direct API (xAI)",
+    "Grok Build platform"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "mistral-large-3",
+   "name": "Mistral Large 3",
+   "creator": "Mistral",
+   "provTier": "confidential",
+   "tierClass": "open-flagship",
+   "inM": 0.5,
+   "outM": 1.5,
+   "elo": 1416,
+   "swe": null,
+   "term": null,
+   "reasoning": false,
+   "vision": true,
+   "ctx": 256000,
+   "standout": "A 675B Apache 2.0 MoE \u2014 the biggest truly open-licensed European flagship.",
+   "bestfor": "Best for: writing and email, reasoning, long documents, self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "direct API (Mistral AI Studio)",
+    "open weights (HF)",
+    "Bedrock",
+    "Azure Foundry",
+    "NVIDIA NIM"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "mistral-medium-3-5",
+   "name": "Mistral Medium 3 5",
+   "creator": "Mistral",
+   "provTier": "confidential",
+   "tierClass": "mid",
+   "inM": 1.5,
+   "outM": 7.5,
+   "elo": 1427,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 256000,
+   "standout": "Mistral's newest frontier bid \u2014 agentic/coding-optimized with adjustable reasoning.",
+   "bestfor": "Best for: writing and email, coding, reasoning, self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "direct API (Mistral AI Studio)",
+    "OpenRouter",
+    "open weights (HF)"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "mistral-small-4",
+   "name": "Mistral Small 4",
+   "creator": "Mistral",
+   "provTier": "confidential",
+   "tierClass": "small",
+   "inM": 0.15,
+   "outM": 0.6,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 256000,
+   "standout": "The consolidation model \u2014 Magistral, Pixtral, and Devstral merged into one Apache 2.0 hybrid. Magistral 1.2 now effectively legacy.",
+   "bestfor": "Best for: writing and email, reasoning, images or audio, self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "direct API (Mistral AI Studio)",
+    "open weights (HF)",
+    "self-host"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "devstral-2",
+   "name": "Devstral 2",
+   "creator": "Mistral",
+   "provTier": "confidential",
+   "tierClass": "mid",
+   "inM": 0.4,
+   "outM": 2.0,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": false,
+   "vision": false,
+   "ctx": 256000,
+   "standout": "One of the strongest open-weight coding agents (72.2 SWE-Bench Verified) \u2014 though Small 4 now absorbs its role at the low end.",
+   "bestfor": "Best for: coding, self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "direct API (Mistral AI Studio)",
+    "Mistral Vibe CLI",
+    "open weights (HF)",
+    "OpenRouter"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "codestral-2508",
+   "name": "Codestral 2508",
+   "creator": "Mistral",
+   "provTier": "confidential",
+   "tierClass": "small",
+   "inM": 0.3,
+   "outM": 0.9,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": false,
+   "vision": false,
+   "ctx": 256000,
+   "standout": "Still Mistral's dedicated autocomplete/FIM engine a year after release \u2014 agentic work moved to Devstral/Small 4.",
+   "bestfor": "Best for: coding, search and research. Confirm current fit with the provider.",
+   "serving": [
+    "direct API (Mistral AI Studio)",
+    "OpenRouter",
+    "IDE integrations"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "mai-thinking-1",
+   "name": "Mai Thinking 1",
+   "creator": "Microsoft AI",
+   "provTier": "regulated_ready",
+   "tierClass": "frontier",
+   "inM": null,
+   "outM": null,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": false,
+   "ctx": 256000,
+   "standout": "Microsoft's first flagship frontier reasoning model built fully in-house without third-party distillation \u2014 the real break from OpenAI dependence.",
+   "bestfor": "Best for: reasoning. Confirm current fit with the provider.",
+   "serving": [
+    "Microsoft Foundry (private preview)",
+    "MAI Playground (announced)",
+    "Copilot integration (announced at Build 2026)"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "nova-2-pro",
+   "name": "Nova 2 Pro",
+   "creator": "Amazon",
+   "provTier": "regulated_ready",
+   "tierClass": "mid",
+   "inM": 1.25,
+   "outM": 10.0,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 1000000,
+   "standout": "Amazon's flagship \u2014 Nova 2 family is Pro/Lite/Omni/Sonic (NOT the old Micro/Premier ladder). Pro still preview-only 7 months after announcement.",
+   "bestfor": "Best for: images or audio. Confirm current fit with the provider.",
+   "serving": [
+    "Bedrock (preview, cross-region inference)",
+    "Amazon Nova Forge"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "nova-2-lite",
+   "name": "Nova 2 Lite",
+   "creator": "Amazon",
+   "provTier": "regulated_ready",
+   "tierClass": "small",
+   "inM": 0.3,
+   "outM": 2.5,
+   "elo": 1337,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 1000000,
+   "standout": "The GA workhorse of the Nova 2 line \u2014 1M-token reasoning.",
+   "bestfor": "Best for: search and research, reasoning, long documents. Confirm current fit with the provider.",
+   "serving": [
+    "Bedrock (GA, global cross-region inference)",
+    "SageMaker (fine-tuning)"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "nemotron-3-ultra-550b",
+   "name": "Nemotron 3 Ultra 550B",
+   "creator": "NVIDIA",
+   "provTier": "public_only",
+   "tierClass": "open-flagship",
+   "inM": 0.37,
+   "outM": 1.08,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": false,
+   "ctx": 1000000,
+   "standout": "Largest US open-weight model of 2026 \u2014 550B MoE with full data/recipe release, positioned against Chinese open flagships.",
+   "bestfor": "Best for: long documents, self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "open weights (HF)",
+    "build.nvidia.com NIM",
+    "DeepInfra",
+    "OpenRouter",
+    "Together",
+    "Baseten",
+    "Fireworks"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "nemotron-3-nano-30b",
+   "name": "Nemotron 3 Nano 30B",
+   "creator": "NVIDIA",
+   "provTier": "public_only",
+   "tierClass": "small",
+   "inM": null,
+   "outM": null,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 1000000,
+   "standout": "The edge/agent workhorse of the family \u2014 3.6B active params with 1M context, and the first Nemotron in Amazon Bedrock.",
+   "bestfor": "Best for: long documents, self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "open weights (HF)",
+    "build.nvidia.com NIM",
+    "Bedrock",
+    "DeepInfra",
+    "Fireworks",
+    "OpenRouter"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "command-a-plus",
+   "name": "Command A Plus",
+   "creator": "Cohere",
+   "provTier": "public_only",
+   "tierClass": "open-flagship",
+   "inM": null,
+   "outM": null,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 128000,
+   "standout": "Cohere's first fully Apache 2.0 open flagship \u2014 a strategic reversal from CC-BY-NC, betting on sovereign/on-prem enterprise.",
+   "bestfor": "Best for: writing and email, coding, self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "open weights (HF, CohereLabs BF16/FP8/W4A4)",
+    "Cohere API",
+    "Cohere Model Vault",
+    "Azure"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "command-a-03-2025",
+   "name": "Command A 03 2025",
+   "creator": "Cohere",
+   "provTier": "public_only",
+   "tierClass": "mid",
+   "inM": 2.5,
+   "outM": 10.0,
+   "elo": 1354,
+   "swe": null,
+   "term": null,
+   "reasoning": false,
+   "vision": false,
+   "ctx": 256000,
+   "standout": "Still the widest-context Cohere model (256K vs A+'s 128K) and anchor of the pre-A+ specialized lineup.",
+   "bestfor": "Best for: coding, long documents. Confirm current fit with the provider.",
+   "serving": [
+    "Cohere API",
+    "open weights (HF, research only)",
+    "Azure",
+    "private/VPC deployment"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "granite-4-1-30b",
+   "name": "Granite 4 1 30B",
+   "creator": "IBM",
+   "provTier": "regulated_ready",
+   "tierClass": "open-flagship",
+   "inM": null,
+   "outM": null,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": false,
+   "vision": false,
+   "ctx": 512000,
+   "standout": "IBM's open enterprise flagship \u2014 10-model family, 512K context, ~15T training tokens, all Apache 2.0.",
+   "bestfor": "Best for: long documents, self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "watsonx.ai",
+    "open weights (HF, ibm-granite)",
+    "Ollama",
+    "LM Studio",
+    "OpenRouter",
+    "Replicate"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "granite-4-1-8b",
+   "name": "Granite 4 1 8B",
+   "creator": "IBM",
+   "provTier": "regulated_ready",
+   "tierClass": "small",
+   "inM": 0.05,
+   "outM": 0.1,
+   "elo": 1307,
+   "swe": null,
+   "term": null,
+   "reasoning": false,
+   "vision": false,
+   "ctx": 512000,
+   "standout": "The '8B beats 32B' story \u2014 IBM's densest capability-per-param model and the only Granite with a current arena.ai ELO.",
+   "bestfor": "Best for: long documents. Confirm current fit with the provider.",
+   "serving": [
+    "watsonx.ai",
+    "open weights (HF)",
+    "Ollama",
+    "LM Studio",
+    "OpenRouter"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "olmo-3-1-32b-think",
+   "name": "Olmo 3 1 32B Think",
+   "creator": "Ai2 (Allen Institute for AI)",
+   "provTier": "self_host",
+   "tierClass": "open-flagship",
+   "inM": 0.15,
+   "outM": 0.5,
+   "elo": 1306,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": false,
+   "ctx": 65000,
+   "standout": "The most fully-open (data+code+weights) reasoning model family in the West. best fully open 32B-scale thinker.",
+   "bestfor": "Best for: coding, reasoning. Confirm current fit with the provider.",
+   "serving": [
+    "open weights (HF, allenai)",
+    "Ai2 Playground",
+    "OpenRouter"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "reka-flash-3-1",
+   "name": "Reka Flash 3 1",
+   "creator": "Reka AI",
+   "provTier": "internal",
+   "tierClass": "mid",
+   "inM": null,
+   "outM": null,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": false,
+   "ctx": 0,
+   "standout": "Still Reka's flagship open LLM. company has pivoted hard to multimodal/physical-AI infra (Vision, Infer, Edge, Moonvalley deal).",
+   "bestfor": "Best for: reasoning, images or audio, self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "open weights (HF, RekaAI)",
+    "Reka API / Playground",
+    "OpenRouter (Reka Edge)"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "lfm2-24b-a2b",
+   "name": "Lfm2 24B A2B",
+   "creator": "Liquid AI",
+   "provTier": "self_host",
+   "tierClass": "small",
+   "inM": null,
+   "outM": null,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": false,
+   "vision": false,
+   "ctx": 32000,
+   "standout": "Hybrid conv+attention MoE that puts a 24B-class model on a laptop. Liquid's whole line is edge-first.",
+   "bestfor": "Best for: writing and email. Confirm current fit with the provider.",
+   "serving": [
+    "open weights (HF, LiquidAI)",
+    "llama.cpp / vLLM / SGLang / MLX / ONNX",
+    "LEAP (Liquid edge platform)"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "hermes-4-405b",
+   "name": "Hermes 4 405B",
+   "creator": "Nous Research",
+   "provTier": "public_only",
+   "tierClass": "open-flagship",
+   "inM": 1.0,
+   "outM": 3.0,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": false,
+   "ctx": 131000,
+   "standout": "Biggest neutrally-aligned/uncensored open hybrid reasoner in the West. Hermes 4.3 line now trained on Nous's decentralized Psyche network.",
+   "bestfor": "Best for: coding, reasoning, self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "open weights (HF, NousResearch)",
+    "OpenRouter",
+    "Nebius",
+    "Nous Portal"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "inkling",
+   "name": "Inkling",
+   "creator": "Thinking Machines Lab",
+   "provTier": "internal",
+   "tierClass": "open-flagship",
+   "inM": null,
+   "outM": null,
+   "elo": 1441,
+   "swe": 54.3,
+   "term": 63.8,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 1000000,
+   "standout": "Murati's first model \u2014 a 975B open-weight multimodal MoE positioned as a customization substrate for Tinker, not a chatbot.",
+   "bestfor": "Best for: images or audio, self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "open weights (HF, incl. NVFP4 checkpoint)",
+    "Tinker (fine-tuning)",
+    "Together",
+    "Fireworks",
+    "Modal",
+    "OpenRouter"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "deepseek-v4-pro",
+   "name": "Deepseek V4 Pro",
+   "creator": "DeepSeek",
+   "provTier": "public_only",
+   "tierClass": "open-flagship",
+   "inM": 0.435,
+   "outM": 0.87,
+   "elo": 1458,
+   "swe": 55.4,
+   "term": null,
+   "reasoning": true,
+   "vision": false,
+   "ctx": 1000000,
+   "standout": "1.6T MIT open-weights flagship with 1M context and three reasoning-effort modes that effectively replaced the R-series.",
+   "bestfor": "Best for: coding, reasoning, self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "official API (international)",
+    "OpenRouter",
+    "open weights (HF: deepseek-ai/DeepSeek-V4-Pro)"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "deepseek-v4-flash",
+   "name": "Deepseek V4 Flash",
+   "creator": "DeepSeek",
+   "provTier": "public_only",
+   "tierClass": "mid",
+   "inM": 0.14,
+   "outM": 0.28,
+   "elo": 1438,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": false,
+   "ctx": 1000000,
+   "standout": "13B-active efficiency workhorse with the same 1M context. default successor to deepseek-chat/reasoner.",
+   "bestfor": "Best for: search and research, reasoning, long documents. Confirm current fit with the provider.",
+   "serving": [
+    "official API (international)",
+    "OpenRouter",
+    "open weights (HF)"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "deepseek-v3-2",
+   "name": "Deepseek V3 2",
+   "creator": "DeepSeek",
+   "provTier": "public_only",
+   "tierClass": "open-flagship",
+   "inM": null,
+   "outM": null,
+   "elo": 1425,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": false,
+   "ctx": 128000,
+   "standout": "Dec-2025 open flagship that carried DeepSeek through H1-2026. still widely deployed by third-party hosts.",
+   "bestfor": "Best for: general questions. Confirm current fit with the provider.",
+   "serving": [
+    "OpenRouter",
+    "open weights (HF)"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "deepseek-v3-2-speciale",
+   "name": "Deepseek V3 2 Speciale",
+   "creator": "DeepSeek",
+   "provTier": "public_only",
+   "tierClass": "open-flagship",
+   "inM": null,
+   "outM": null,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": false,
+   "ctx": 128000,
+   "standout": "reasoning, self-hosting. Confirm current fit with the provider.",
+   "bestfor": "Best for: reasoning, self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "OpenRouter",
+    "open weights (HF)"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "qwen3-7-max",
+   "name": "Qwen3 7 Max",
+   "creator": "Alibaba (Qwen)",
+   "provTier": "confidential",
+   "tierClass": "frontier",
+   "inM": 2.5,
+   "outM": 7.5,
+   "elo": 1475,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": false,
+   "ctx": 1000000,
+   "standout": "Alibaba's closed-weight agent flagship \u2014 1M context, marketed on 35-hour autonomous agent runs, global top-10 on aggregate indices.",
+   "bestfor": "Best for: writing and email, search and research. Confirm current fit with the provider.",
+   "serving": [
+    "official API (Alibaba Cloud Model Studio, international)",
+    "OpenRouter"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "qwen3-5-397b-a17b",
+   "name": "Qwen3 5 397B A17B",
+   "creator": "Alibaba (Qwen)",
+   "provTier": "confidential",
+   "tierClass": "open-flagship",
+   "inM": 0.6,
+   "outM": 3.6,
+   "elo": 1442,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 262144,
+   "standout": "Alibaba's open-weight flagship \u2014 natively multimodal MoE with early-fusion vision training and only 17B active params.",
+   "bestfor": "Best for: writing and email, images or audio, self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "open weights (HF: Qwen/Qwen3.5-397B-A17B)",
+    "Alibaba Cloud Model Studio (international)",
+    "OpenRouter",
+    "Ollama cloud"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "qwen3-5-plus-02-15",
+   "name": "Qwen3 5 Plus 02 15",
+   "creator": "Alibaba (Qwen)",
+   "provTier": "confidential",
+   "tierClass": "mid",
+   "inM": 0.4,
+   "outM": 2.4,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 1000000,
+   "standout": "Hosted mid-tier of the natively multimodal Qwen3.5 series \u2014 1M-context VLM.",
+   "bestfor": "Best for: images or audio. Confirm current fit with the provider.",
+   "serving": [
+    "official API (Alibaba Cloud Model Studio, international)",
+    "OpenRouter"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "qwen3-6-27b",
+   "name": "Qwen3 6 27B",
+   "creator": "Alibaba (Qwen)",
+   "provTier": "confidential",
+   "tierClass": "mid",
+   "inM": null,
+   "outM": null,
+   "elo": null,
+   "swe": 53.5,
+   "term": null,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 262144,
+   "standout": "Dense 27B that out-codes Qwen's own 397B MoE on agentic coding \u2014 the standout local-deployment model of spring 2026.",
+   "bestfor": "Best for: coding, self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "open weights (HF: Qwen/Qwen3.6-27B)",
+    "OpenRouter",
+    "local (Ollama)"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "kimi-k3",
+   "name": "Kimi K3",
+   "creator": "Moonshot AI",
+   "provTier": "public_only",
+   "tierClass": "frontier",
+   "inM": 3.0,
+   "outM": 15.0,
+   "elo": 1486,
+   "swe": null,
+   "term": 88.3,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 1000000,
+   "standout": "Largest-ever open-weight-class model (2.8T MoE, 1M ctx, native multimodal) \u2014 first Chinese model within striking distance of Claude Fable 5.",
+   "bestfor": "Best for: images or audio, self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "Moonshot API international",
+    "kimi.com",
+    "OpenRouter",
+    "open weights pending \u2014 no HF repo as of 2026-07-19, promised by 2026-07-27"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "kimi-k2-7-code",
+   "name": "Kimi K2 7 Code",
+   "creator": "Moonshot AI",
+   "provTier": "public_only",
+   "tierClass": "open-flagship",
+   "inM": 0.95,
+   "outM": 4.0,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 262144,
+   "standout": "Coding-specialist fork of the 1T K2 line tuned for token-efficient agentic coding. multimodal input.",
+   "bestfor": "Best for: coding, images or audio. Confirm current fit with the provider.",
+   "serving": [
+    "Moonshot API international",
+    "OpenRouter",
+    "open weights (HF: moonshotai/Kimi-K2.7-Code)",
+    "Microsoft Foundry"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "glm-5-2",
+   "name": "Glm 5 2",
+   "creator": "Zhipu AI / Z.ai",
+   "provTier": "internal",
+   "tierClass": "open-flagship",
+   "inM": 1.4,
+   "outM": 4.4,
+   "elo": 1468,
+   "swe": 62.1,
+   "term": 81.0,
+   "reasoning": true,
+   "vision": false,
+   "ctx": 1000000,
+   "standout": "1M-context MIT open flagship \u2014 highest verified SWE-Bench Pro (62.1) of the open field. text-only remains its gap.",
+   "bestfor": "Best for: coding, images or audio, self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "z.ai API international",
+    "OpenRouter",
+    "open weights (HF: zai-org/GLM-5.2)",
+    "Cloudflare Workers AI",
+    "Together/Fireworks/DeepInfra"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "glm-5-1",
+   "name": "Glm 5 1",
+   "creator": "Zhipu AI / Z.ai",
+   "provTier": "internal",
+   "tierClass": "open-flagship",
+   "inM": 1.4,
+   "outM": 4.4,
+   "elo": 1471,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": false,
+   "ctx": 200000,
+   "standout": "Long-horizon agent refinement of GLM-5. bridge release now eclipsed by GLM-5.2.",
+   "bestfor": "Best for: general questions. Confirm current fit with the provider.",
+   "serving": [
+    "z.ai API international",
+    "OpenRouter",
+    "open weights (HF: zai-org/GLM-5.1)"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "glm-5",
+   "name": "Glm 5",
+   "creator": "Zhipu AI / Z.ai",
+   "provTier": "internal",
+   "tierClass": "open-flagship",
+   "inM": 1.0,
+   "outM": 3.2,
+   "elo": 1457,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": false,
+   "ctx": 200000,
+   "standout": "First frontier-class model trained entirely on Huawei Ascend with zero NVIDIA dependency \u2014 geopolitically the most significant release of early 2026.",
+   "bestfor": "Best for: self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "z.ai API international",
+    "OpenRouter",
+    "open weights (HF: zai-org/GLM-5)"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "glm-5v-turbo",
+   "name": "Glm 5V Turbo",
+   "creator": "Zhipu AI / Z.ai",
+   "provTier": "internal",
+   "tierClass": "mid",
+   "inM": 1.2,
+   "outM": 4.0,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 200000,
+   "standout": "Z.ai's only current vision model \u2014 there is no open 'GLM-5V'. devs are loudly demanding vision in GLM-5.3.",
+   "bestfor": "Best for: images or audio. Confirm current fit with the provider.",
+   "serving": [
+    "z.ai API international",
+    "not open weights"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "minimax-m3",
+   "name": "Minimax M3",
+   "creator": "MiniMax",
+   "provTier": "public_only",
+   "tierClass": "open-flagship",
+   "inM": 0.3,
+   "outM": 1.2,
+   "elo": 1445,
+   "swe": 59.0,
+   "term": 66.0,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 1000000,
+   "standout": "First open-weight model combining frontier coding + 1M context + native multimodality (incl. computer use).",
+   "bestfor": "Best for: coding, search and research, images or audio, self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "MiniMax API international",
+    "OpenRouter",
+    "open weights (HF: MiniMaxAI/MiniMax-M3)",
+    "NVIDIA NIM, Together, Fireworks, DeepInfra"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "minimax-m2-7",
+   "name": "Minimax M2 7",
+   "creator": "MiniMax",
+   "provTier": "public_only",
+   "tierClass": "mid",
+   "inM": 0.3,
+   "outM": 1.2,
+   "elo": 1417,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": false,
+   "ctx": 200000,
+   "standout": "Efficiency king of the M2 line (10B active), but its non-commercial license drew backlash \u2014 fixed in M3's Community License.",
+   "bestfor": "Best for: general questions. Confirm current fit with the provider.",
+   "serving": [
+    "MiniMax API international",
+    "open weights (HF, restricted license)"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "doubao-seed-2-1-pro",
+   "name": "Doubao Seed 2 1 Pro",
+   "creator": "ByteDance (Seed)",
+   "provTier": "confidential",
+   "tierClass": "frontier",
+   "inM": 0.84,
+   "outM": 4.2,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 256000,
+   "standout": "the Seed 2.x line has no open weights anywhere.",
+   "bestfor": "Best for: images or audio, self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "Volcano Engine API (intl billing works)",
+    "OpenRouter (Lite/Mini tiers only)",
+    "no open weights in Seed 2.x line"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "ernie-5-1",
+   "name": "Ernie 5 1",
+   "creator": "Baidu",
+   "provTier": "public_only",
+   "tierClass": "frontier",
+   "inM": 0.59,
+   "outM": 2.65,
+   "elo": 1468,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": false,
+   "ctx": 128000,
+   "standout": "Baidu went back to closed after the ERNIE 4.5 open-source moment \u2014 the 5.x line is hosted-only, text-only, and China-gated, yet charts near the top of the eastern pack.",
+   "bestfor": "Best for: general questions. Confirm current fit with the provider.",
+   "serving": [
+    "China-only API in practice (Qianfan, CN phone gate)",
+    "ernie.baidu.com chat"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "hy3",
+   "name": "Hy3",
+   "creator": "Tencent",
+   "provTier": "internal",
+   "tierClass": "open-flagship",
+   "inM": 0.2,
+   "outM": 0.8,
+   "elo": 1412,
+   "swe": null,
+   "term": 71.7,
+   "reasoning": true,
+   "vision": false,
+   "ctx": 256000,
+   "standout": "Open-weight frontier reasoner that fits a single node (<300GB FP8). 8.7% of OpenRouter token share by end of June 2026 \u2014 reportedly Tencent's final Hunyuan foundation release per Caixin.",
+   "bestfor": "Best for: reasoning, self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "OpenRouter",
+    "open weights (HF: tencent/Hy3)",
+    "Tencent Cloud API",
+    "Yuanbao app"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "step-3-7-flash",
+   "name": "Step 3 7 Flash",
+   "creator": "StepFun",
+   "provTier": "public_only",
+   "tierClass": "mid",
+   "inM": 0.2,
+   "outM": 1.15,
+   "elo": null,
+   "swe": 56.26,
+   "term": 59.55,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 256000,
+   "standout": "reasoning depth selectable low/medium/high.",
+   "bestfor": "Best for: coding, search and research, reasoning, images or audio. Confirm current fit with the provider.",
+   "serving": [
+    "OpenRouter",
+    "open weights (HF)",
+    "StepFun Platform API",
+    "NVIDIA NIM"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "intern-s1-pro",
+   "name": "Intern S1 Pro",
+   "creator": "Shanghai AI Laboratory (InternLM)",
+   "provTier": "public_only",
+   "tierClass": "open-flagship",
+   "inM": null,
+   "outM": null,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 0,
+   "standout": "1T-param open MoE aimed at 'AI4S 2.0' \u2014 chemistry, materials, life/earth science rather than general chat.",
+   "bestfor": "Best for: search and research, reasoning, images or audio. Confirm current fit with the provider.",
+   "serving": [
+    "open weights (HF)",
+    "ModelScope",
+    "chat.intern-ai.org.cn demo"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "longcat-2-0",
+   "name": "Longcat 2 0",
+   "creator": "Meituan (LongCat)",
+   "provTier": "public_only",
+   "tierClass": "open-flagship",
+   "inM": 0.75,
+   "outM": 2.95,
+   "elo": null,
+   "swe": 59.5,
+   "term": 70.8,
+   "reasoning": true,
+   "vision": false,
+   "ctx": 1000000,
+   "standout": "1.6T MIT-licensed agentic coder trained entirely on Chinese ASIC superpods with native 1M context \u2014 OpenRouter's chart-topping stealth model 'Owl Alpha' revealed.",
+   "bestfor": "Best for: coding. Confirm current fit with the provider.",
+   "serving": [
+    "LongCat API (international)",
+    "OpenRouter",
+    "Claude Code / OpenCode / Codex harness integrations",
+    "HF weights pending"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "spark-x2",
+   "name": "Spark X2",
+   "creator": "iFlytek",
+   "provTier": "public_only",
+   "tierClass": "mid",
+   "inM": null,
+   "outM": null,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": false,
+   "ctx": 256000,
+   "standout": "Trained fully on domestic Huawei compute \u2014 its whole pitch is sovereignty, not benchmarks. the only truly China-only row in this matrix.",
+   "bestfor": "Best for: general questions. Confirm current fit with the provider.",
+   "serving": [
+    "China-only API"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "mimo-v2-5-pro",
+   "name": "Mimo V2 5 Pro",
+   "creator": "Xiaomi (MiMo)",
+   "provTier": "internal",
+   "tierClass": "mid",
+   "inM": 0.435,
+   "outM": 0.87,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 1000000,
+   "standout": "Xiaomi quietly scaled from a 7B open experiment to a closed 1T/42B 1M-context omni line (Pro/ASR/TTS/Omni) in about a year.",
+   "bestfor": "Best for: general questions. Confirm current fit with the provider.",
+   "serving": [
+    "Xiaomi MiMo API (international via Token Plan)",
+    "China platform (platform.xiaomimimo.com)"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "gemma-4-e4b",
+   "name": "Gemma 4 E4B",
+   "creator": "Google DeepMind",
+   "provTier": "confidential",
+   "tierClass": "small",
+   "inM": null,
+   "outM": null,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 128000,
+   "standout": "Phone-class multimodal (image+video+audio input) with native function calling for local agents.",
+   "bestfor": "Best for: images or audio. Confirm current fit with the provider.",
+   "serving": [
+    "open weights (HF)",
+    "Android AI Edge / on-device"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "olmo-3-1-32b-instruct",
+   "name": "Olmo 3 1 32B Instruct",
+   "creator": "Allen Institute for AI (Ai2)",
+   "provTier": "self_host",
+   "tierClass": "mid",
+   "inM": null,
+   "outM": null,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": false,
+   "ctx": 65000,
+   "standout": "The truly-open flagship: full model flow released \u2014 data (Dolma/Dolci), code, every checkpoint, training logs.",
+   "bestfor": "Best for: coding. Confirm current fit with the provider.",
+   "serving": [
+    "open weights (HF)",
+    "Ai2 playground"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "falcon-h1r-7b",
+   "name": "Falcon H1R 7B",
+   "creator": "TII (Abu Dhabi)",
+   "provTier": "self_host",
+   "tierClass": "small",
+   "inM": null,
+   "outM": null,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": false,
+   "ctx": 256000,
+   "standout": "Hybrid-Mamba reasoning at 7B that out-reasons models 2-7x larger via DeepConf test-time scaling. no Falcon-H2 \u2014 H1R is TII's current reasoning flagship.",
+   "bestfor": "Best for: reasoning, self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "open weights (HF)"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "exaone-4-5-33b",
+   "name": "Exaone 4 5 33B",
+   "creator": "LG AI Research",
+   "provTier": "self_host",
+   "tierClass": "mid",
+   "inM": null,
+   "outM": null,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 256000,
+   "standout": "Korea's strongest open VLM (claims beating GPT-5-mini on STEM) \u2014 but the NC license blocks commercial use. K-EXAONE sovereign project ongoing.",
+   "bestfor": "Best for: search and research, images or audio. Confirm current fit with the provider.",
+   "serving": [
+    "open weights (HF, non-commercial)",
+    "GGUF/llama.cpp",
+    "vLLM/SGLang/TensorRT-LLM"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "hyperclovax-seed-think-32b",
+   "name": "Hyperclovax Seed Think 32B",
+   "creator": "Naver",
+   "provTier": "public_only",
+   "tierClass": "mid",
+   "inM": null,
+   "outM": null,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": true,
+   "ctx": 128000,
+   "standout": "Korea's sovereign-AI standard-bearer: configurable think-token budgets and video input in an open 32B.",
+   "bestfor": "Best for: writing and email, images or audio, self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "open weights (HF)",
+    "CLOVA Studio (Korea)"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "sarvam-105b",
+   "name": "Sarvam 105B",
+   "creator": "Sarvam AI (India)",
+   "provTier": "internal",
+   "tierClass": "open-flagship",
+   "inM": null,
+   "outM": null,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": false,
+   "ctx": 0,
+   "standout": "India's biggest open release: Apache-2.0 105B MoE tuned for 22 scheduled Indian languages, under the IndiaAI Mission.",
+   "bestfor": "Best for: self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "open weights (HF)",
+    "AI Kosh (IndiaAI)"
+   ],
+   "status": "active"
+  },
+  {
+   "id": "rakuten-ai-3-0",
+   "name": "Rakuten Ai 3 0",
+   "creator": "Rakuten Group (Japan, GENIAC/METI-backed)",
+   "provTier": "self_host",
+   "tierClass": "open-flagship",
+   "inM": null,
+   "outM": null,
+   "elo": null,
+   "swe": null,
+   "term": null,
+   "reasoning": true,
+   "vision": false,
+   "ctx": 0,
+   "standout": "A ~700B Apache-2.0 MoE from a Japanese e-commerce giant \u2014 Japan's largest open-weight LLM and biggest sovereign open-weights bet.",
+   "bestfor": "Best for: self-hosting. Confirm current fit with the provider.",
+   "serving": [
+    "open weights (HF)"
+   ],
+   "status": "active"
+  }
+ ],
+ "genai": [
+  {
+   "id": "gpt-image-2",
+   "name": "GPT Image 2",
+   "modality": "image",
+   "creator": "OpenAI",
+   "provTier": "regulated_ready",
+   "quality": "1385 (#1, +83 over #2). also #1 Artificial Analysis at 1337 (high).",
+   "price": "Check the provider for current rates.",
+   "standout": "Best-in-class typography/text rendering (98.5% accuracy in Atlas Cloud benchmark) and prompt adherence.",
+   "status": "active"
+  },
+  {
+   "id": "reve-2-1",
+   "name": "Reve 2.1",
+   "modality": "image",
+   "creator": "Reve",
+   "provTier": "public_only",
+   "quality": "Reve 2.0 = 1271 (#4).",
+   "price": "Check the provider for current rates.",
+   "standout": "Layout-first 4K generation.",
+   "status": "active"
+  },
+  {
+   "id": "muse-image",
+   "name": "Muse Image",
+   "modality": "image",
+   "creator": "Meta (Superintelligence Labs)",
+   "provTier": "public_only",
+   "quality": "1280 (#3).",
+   "price": "Check the provider for current rates.",
+   "standout": "Deep social/ad integration \u2014 ads, Marketplace mockups, functional QR codes.",
+   "status": "active"
+  },
+  {
+   "id": "gemini-3-1-flash-image-nano-banana-2",
+   "name": "Gemini 3.1 Flash Image ('Nano Banana 2')",
+   "modality": "image",
+   "creator": "Google DeepMind",
+   "provTier": "confidential",
+   "quality": "AA: NB2 Lite 1258 (#4).",
+   "price": "Check the provider for current rates.",
+   "standout": "Only model with Google Image Search grounding (real-time web context). 4K + extreme aspect ratios (8:1, 21:9).",
+   "status": "active"
+  },
+  {
+   "id": "mai-image-2-5",
+   "name": "MAI-Image-2.5",
+   "modality": "image",
+   "creator": "Microsoft AI",
+   "provTier": "regulated_ready",
+   "quality": "LMArena 1257 (#6).",
+   "price": "Check the provider for current rates.",
+   "standout": "Face/identity consistency across edits. +75 ELO over MAI-Image-2 in ~6 months.",
+   "status": "active"
+  },
+  {
+   "id": "flux-2-family",
+   "name": "FLUX.2 family",
+   "modality": "image",
+   "creator": "Black Forest Labs",
+   "provTier": "public_only",
+   "quality": "FLUX.2 Max 1168 (Dec 2025 snapshot). out of top-5 on both boards by July 2026.",
+   "price": "Check the provider for current rates.",
+   "standout": "Best open-weights ecosystem: 10 reference images, 4MP editing, 32K-token prompts, sub-second klein inference.",
+   "status": "active"
+  },
+  {
+   "id": "midjourney-v8",
+   "name": "Midjourney V8",
+   "modality": "image",
+   "creator": "Midjourney",
+   "provTier": "public_only",
+   "quality": "not listed (doesn't participate). aesthetics specialist.",
+   "price": "Check the provider for current rates.",
+   "standout": "5x faster than V7, native 2K via --hd, distinctive artistic aesthetic.",
+   "status": "active"
+  },
+  {
+   "id": "seedream-5-0-pro-lite",
+   "name": "Seedream 5.0 (Pro + Lite)",
+   "modality": "image",
+   "creator": "ByteDance (Seed)",
+   "provTier": "confidential",
+   "quality": "4.5 was 1147 ELO (Dec 2025). 5.0 Pro too new for July boards \u2014 community pegs it GPT-Image-2-level (unverified).",
+   "price": "Check the provider for current rates.",
+   "standout": "Pro generates 10+ separable editable transparent LAYERS from text. 14-language text rendering.",
+   "status": "active"
+  },
+  {
+   "id": "hidream-o1-image",
+   "name": "HiDream-O1-Image",
+   "modality": "image",
+   "creator": "HiDream.ai (Vivago)",
+   "provTier": "public_only",
+   "quality": "1263 (#3) \u2014 top open-lineage model.",
+   "price": "Check the provider for current rates.",
+   "standout": "Pixel-native unified transformer with built-in reasoning agent that plans layout/physics/text before drawing. 8B beats 56B-class FLUX.2 on several benches.",
+   "status": "active"
+  },
+  {
+   "id": "qwen-image-2-0",
+   "name": "Qwen-Image 2.0",
+   "modality": "image",
+   "creator": "Alibaba (Qwen)",
+   "provTier": "confidential",
+   "quality": "arena claims from fan site UNVERIFIED \u2014 not in July 2026 top-10 on LMArena/AA.",
+   "price": "Check the provider for current rates.",
+   "standout": "Best-in-class bilingual (CN/EN) typography and infographic/poster generation in a 7B model.",
+   "status": "active"
+  },
+  {
+   "id": "ideogram-4-0",
+   "name": "Ideogram 4.0",
+   "modality": "image",
+   "creator": "Ideogram AI",
+   "provTier": "public_only",
+   "quality": "not in July 2026 top-10 on either arena. ~92% typography accuracy (secondary source).",
+   "price": "Check the provider for current rates.",
+   "standout": "Typography/logo specialist with character-reference generation.",
+   "status": "active"
+  },
+  {
+   "id": "recraft-v4-1",
+   "name": "Recraft V4.1",
+   "modality": "image",
+   "creator": "Recraft",
+   "provTier": "public_only",
+   "quality": "V4.1 Utility Pro 1207 (#10).",
+   "price": "Check the provider for current rates.",
+   "standout": "Only top model emitting layered editable SVG (native vector) \u2014 design/brand/print focus. has a Figma plugin.",
+   "status": "active"
+  },
+  {
+   "id": "stable-diffusion-3-5",
+   "name": "Stable Diffusion 3.5",
+   "modality": "image",
+   "creator": "Stability AI",
+   "provTier": "public_only",
+   "quality": "not in any July 2026 top-10. superseded by FLUX.2/HiDream/Qwen in open-weights space.",
+   "price": "Check the provider for current rates.",
+   "standout": "Massive legacy fine-tune/LoRA/ControlNet ecosystem.",
+   "status": "active"
+  },
+  {
+   "id": "gemini-omni-flash",
+   "name": "Gemini Omni Flash",
+   "modality": "video",
+   "creator": "Google",
+   "provTier": "confidential",
+   "quality": "1527 (#1) / 1240 (#1).",
+   "price": "Check the provider for current rates.",
+   "standout": "Conversational video generation/editing \u2014 iterate on a clip by talking to it. multimodal inputs. SynthID watermark.",
+   "status": "active"
+  },
+  {
+   "id": "veo-3-1",
+   "name": "Veo 3.1",
+   "modality": "video",
+   "creator": "Google DeepMind",
+   "provTier": "confidential",
+   "quality": "veo-3.1-audio 1364 (#6-7) / 1093 (#11).",
+   "price": "Check the provider for current rates.",
+   "standout": "Extend-video chaining to ~148s. the model inside Canva's video clip feature.",
+   "status": "active"
+  },
+  {
+   "id": "seedance-2-0",
+   "name": "Seedance 2.0",
+   "modality": "video",
+   "creator": "ByteDance (Dreamina/Jimeng)",
+   "provTier": "confidential",
+   "quality": "1482 (#2, 41,953 votes) / 1224 (#2).",
+   "price": "Check the provider for current rates.",
+   "standout": "Richest multimodal conditioning: up to 9 images + 3 videos + 3 audio refs. 2K, 4-15s, native audio.",
+   "status": "active"
+  },
+  {
+   "id": "happyhorse-1-1",
+   "name": "HappyHorse 1.1",
+   "modality": "video",
+   "creator": "Alibaba (ATH Innovation Unit)",
+   "provTier": "confidential",
+   "quality": "1.1: 1150 (#4 AA). 1.0: 1430 (#4 arena).",
+   "price": "Check the provider for current rates.",
+   "standout": "~15B unified transformer. multilingual lip-sync (6 languages). 9 reference images. ~38s to render 1080p on one H100.",
+   "status": "active"
+  },
+  {
+   "id": "kling-3-0-3-0-omni",
+   "name": "Kling 3.0 / 3.0 Omni",
+   "modality": "video",
+   "creator": "Kuaishou (KlingAI)",
+   "provTier": "public_only",
+   "quality": "3.0 Pro 1080p 1110 (#6).",
+   "price": "Check the provider for current rates.",
+   "standout": "Native multilingual audio + lip-sync in 5 languages, Motion Brush path control, up to 4K/60fps. best sub- consumer plan in top-10 video.",
+   "status": "active"
+  },
+  {
+   "id": "wan-2-7-2-6",
+   "name": "Wan 2.7 / 2.6",
+   "modality": "video",
+   "creator": "Alibaba (Tongyi/Wan)",
+   "provTier": "confidential",
+   "quality": "Wan2.7 1158 (#3 AA) / 1348 (#11 arena).",
+   "price": "Check the provider for current rates.",
+   "standout": "The open-ecosystem champion \u2014 top-3 quality with a self-host path (16-24GB VRAM). native audio, 1080p/15s.",
+   "status": "active"
+  },
+  {
+   "id": "grok-imagine-video",
+   "name": "Grok Imagine Video",
+   "modality": "video",
+   "creator": "xAI / SpaceXAI (SpaceX acquisition closed 2026-02-02; rebrand 2026-07-06)",
+   "provTier": "regulated_ready",
+   "quality": "highest vote count on board: 144,437).",
+   "price": "Check the provider for current rates.",
+   "standout": "up to 7 reference images.",
+   "status": "active"
+  },
+  {
+   "id": "muse-video",
+   "name": "Muse Video",
+   "modality": "video",
+   "creator": "Meta (Superintelligence Labs)",
+   "provTier": "public_only",
+   "quality": "1459 (#3, 2,152 votes).",
+   "price": "Check the provider for current rates.",
+   "standout": "#3 human-preference ELO while still pre-launch.",
+   "status": "active"
+  },
+  {
+   "id": "luma-ray3-2",
+   "name": "Luma Ray3.2",
+   "modality": "video",
+   "creator": "Luma AI",
+   "provTier": "public_only",
+   "quality": "not in either top-15 (mid-pack, unverified).",
+   "price": "Check the provider for current rates.",
+   "standout": "Only pro-pipeline HDR model: native 16-bit HDR + EXR/ACES export for VFX.",
+   "status": "active"
+  },
+  {
+   "id": "pika-2-5",
+   "name": "Pika 2.5",
+   "modality": "video",
+   "creator": "Pika Labs",
+   "provTier": "public_only",
+   "quality": "absent from both top-15 boards.",
+   "price": "Check the provider for current rates.",
+   "standout": "Effects-first creative toolkit (Pikaffects, Pikaswaps, lip-synced Pikaformance).",
+   "status": "active"
+  },
+  {
+   "id": "hailuo-03-minimax-3-0",
+   "name": "Hailuo 03 (MiniMax 3.0)",
+   "modality": "video",
+   "creator": "MiniMax",
+   "provTier": "public_only",
+   "quality": "not in either top-15 (unverified).",
+   "price": "Check the provider for current rates.",
+   "standout": "images or audio. Confirm current fit with the provider.",
+   "status": "active"
+  },
+  {
+   "id": "runway-gen-4-5",
+   "name": "Runway Gen-4.5",
+   "modality": "video",
+   "creator": "Runway",
+   "provTier": "public_only",
+   "quality": "1247 (#1 at Dec-2025 launch). absent from July 2026 top-15.",
+   "price": "Check the provider for current rates.",
+   "standout": "Physical accuracy/temporal consistency + pro editing suite (keyframes, video-to-video, Act-Two performance capture).",
+   "status": "active"
+  },
+  {
+   "id": "vidu-q3-q3-pro",
+   "name": "Vidu Q3 / Q3 Pro",
+   "modality": "video",
+   "creator": "Shengshu AI",
+   "provTier": "public_only",
+   "quality": "Q3 Pro 1082 (#15).",
+   "price": "Check the provider for current rates.",
+   "standout": "Anime/character-reference strength at (unverified).",
+   "status": "active"
+  },
+  {
+   "id": "skyreels-v4",
+   "name": "SkyReels V4",
+   "modality": "video",
+   "creator": "Skywork AI",
+   "provTier": "public_only",
+   "quality": "1106 (#7).",
+   "price": "Check the provider for current rates.",
+   "standout": "Film/drama-oriented long-form generation (unverified).",
+   "status": "active"
+  },
+  {
+   "id": "eleven-v3",
+   "name": "Eleven v3",
+   "modality": "speech",
+   "creator": "ElevenLabs",
+   "provTier": "public_only",
+   "quality": "1180 (#4 overall).",
+   "price": "Check the provider for current rates.",
+   "standout": "Deepest ecosystem (dubbing, agents, SFX, music). v3 emotional audio tags + multi-speaker dialogue.",
+   "status": "active"
+  },
+  {
+   "id": "gpt-4o-mini-tts",
+   "name": "gpt-4o-mini-tts",
+   "modality": "speech",
+   "creator": "OpenAI",
+   "provTier": "regulated_ready",
+   "quality": "mid-pack, not top-10 (exact ELO unverified).",
+   "price": "Check the provider for current rates.",
+   "standout": "'instructions' parameter steers tone/delivery.",
+   "status": "active"
+  },
+  {
+   "id": "cartesia-sonic-3-5",
+   "name": "Cartesia Sonic-3.5",
+   "modality": "speech",
+   "creator": "Cartesia",
+   "provTier": "public_only",
+   "quality": "#1 in realtime-latency class (exact ELO unverified).",
+   "price": "Check the provider for current rates.",
+   "standout": "Fastest low-latency streaming TTS (SSM architecture). absorbed much of Play.ai's fleeing user base.",
+   "status": "active"
+  },
+  {
+   "id": "google-chirp-3-hd-gemini-tts",
+   "name": "Google Chirp 3 HD + Gemini-TTS",
+   "modality": "speech",
+   "creator": "Google Cloud",
+   "provTier": "confidential",
+   "quality": "Gemini 3.1 Flash TTS 1205 (#2 overall).",
+   "price": "Check the provider for current rates.",
+   "standout": "Prompt-steerable near-SOTA quality inside GCP compliance envelope. generous free monthly tier.",
+   "status": "active"
+  },
+  {
+   "id": "hume-octave-2",
+   "name": "Hume Octave 2",
+   "modality": "speech",
+   "creator": "Hume AI",
+   "provTier": "public_only",
+   "quality": "unverified \u2014 emotion-expressiveness differentiator, mid-pack naturalness.",
+   "price": "Check the provider for current rates.",
+   "standout": "LLM-based 'voice acting' \u2014 interprets script meaning, per-utterance emotion control.",
+   "status": "active"
+  },
+  {
+   "id": "minimax-speech-2-6-2-8-hd",
+   "name": "MiniMax Speech 2.6 / 2.8 HD",
+   "modality": "speech",
+   "creator": "MiniMax (Hailuo)",
+   "provTier": "public_only",
+   "quality": "Speech 2.8 HD 1163 (#5).",
+   "price": "Check the provider for current rates.",
+   "standout": "general questions. Confirm current fit with the provider.",
+   "status": "active"
+  },
+  {
+   "id": "alibaba-fun-realtime-tts-qwen3-tts",
+   "name": "Alibaba Fun-Realtime-TTS / Qwen3-TTS",
+   "modality": "speech",
+   "creator": "Alibaba",
+   "provTier": "confidential",
+   "quality": "took #1 (~1206 cluster), surpassing Gemini 3.1 Flash TTS.",
+   "price": "Check the provider for current rates.",
+   "standout": "Chinese lab at the top of the speech arena. regional-accent strength.",
+   "status": "active"
+  },
+  {
+   "id": "inworld-realtime-tts-1-5-max",
+   "name": "Inworld Realtime TTS 1.5 Max",
+   "modality": "speech",
+   "creator": "Inworld AI (attribution unverified)",
+   "provTier": "public_only",
+   "quality": "1206 \u2014 #1 as of 2026-07-19 (top-3 within ~24 ELO, shuffles frequently).",
+   "price": "Check the provider for current rates.",
+   "standout": "Current arena leader.",
+   "status": "active"
+  },
+  {
+   "id": "kokoro-82m",
+   "name": "Kokoro 82M",
+   "modality": "speech",
+   "creator": "hexgrad (open source)",
+   "provTier": "public_only",
+   "quality": "1056 (#10); MOS 4.2/5.",
+   "price": "Check the provider for current rates.",
+   "standout": "82M params beating billion-param models.",
+   "status": "active"
+  },
+  {
+   "id": "chatterbox",
+   "name": "Chatterbox",
+   "modality": "speech",
+   "creator": "Resemble AI",
+   "provTier": "public_only",
+   "quality": "won 63.8-65.3% vs ElevenLabs (Resemble-run study \u2014 vendor-biased).",
+   "price": "Check the provider for current rates.",
+   "standout": "Best open-weights voice cloning.",
+   "status": "active"
+  },
+  {
+   "id": "fish-audio-s2-pro-openaudio",
+   "name": "Fish Audio S2 Pro (OpenAudio)",
+   "modality": "speech",
+   "creator": "Fish Audio",
+   "provTier": "public_only",
+   "quality": "1128 (#6) \u2014 highest-ranked open-weights model.",
+   "price": "Check the provider for current rates.",
+   "standout": "images or audio, self-hosting. Confirm current fit with the provider.",
+   "status": "active"
+  },
+  {
+   "id": "mistral-voxtral-tts",
+   "name": "Mistral Voxtral TTS",
+   "modality": "speech",
+   "creator": "Mistral AI",
+   "provTier": "confidential",
+   "quality": "won 68.4% vs ElevenLabs Flash v2.5 (Mistral-run test).",
+   "price": "Check the provider for current rates.",
+   "standout": "European frontier-lab entry into open speech.",
+   "status": "active"
+  },
+  {
+   "id": "suno",
+   "name": "Suno",
+   "modality": "music",
+   "creator": "Suno Inc.",
+   "provTier": "public_only",
+   "quality": "de-facto consumer leader. no neutral arena exists.",
+   "price": "Check the provider for current rates.",
+   "standout": "Studio DAW-like editor.",
+   "status": "active"
+  },
+  {
+   "id": "udio",
+   "name": "Udio",
+   "modality": "music",
+   "creator": "Uncharted Labs",
+   "provTier": "public_only",
+   "quality": "historically praised fidelity. currently walled-garden.",
+   "price": "Check the provider for current rates.",
+   "standout": "First AI music firm to convert a label lawsuit (UMG, settled 2025-10-29) into a licensing partnership. relaunch will allow remixing licensed UMG catalog.",
+   "status": "active"
+  },
+  {
+   "id": "stable-audio-2-5",
+   "name": "Stable Audio 2.5",
+   "modality": "music",
+   "creator": "Stability AI",
+   "provTier": "public_only",
+   "quality": "SFX/soundbeds/brand audio, not vocal songs. <2s inference for ~3min audio.",
+   "price": "Check the provider for current rates.",
+   "standout": "Fastest generation. audio-to-audio inpainting. the 'safe' enterprise choice.",
+   "status": "active"
+  },
+  {
+   "id": "google-lyria-3-lyria-3-pro",
+   "name": "Google Lyria 3 / Lyria 3 Pro",
+   "modality": "music",
+   "creator": "Google DeepMind",
+   "provTier": "confidential",
+   "quality": "first frontier model with structural control (verse/chorus/bridge) + timed lyrics + vocals (comparative rank unverified).",
+   "price": "Check the provider for current rates.",
+   "standout": "general questions. Confirm current fit with the provider.",
+   "status": "active"
+  },
+  {
+   "id": "eleven-music-v2",
+   "name": "Eleven Music v2",
+   "modality": "music",
+   "creator": "ElevenLabs",
+   "provTier": "public_only",
+   "quality": "section-level inpainting, embedded SFX, mid-song style shifts, multilingual vocals (no arena rank).",
+   "price": "Check the provider for current rates.",
+   "standout": "Only major music offering combining licensed training data + real API + editing/inpainting.",
+   "status": "active"
+  },
+  {
+   "id": "heygen-avatar-iv-avatar-v",
+   "name": "HeyGen (Avatar IV / Avatar V)",
+   "modality": "avatar",
+   "creator": "HeyGen",
+   "provTier": "public_only",
+   "quality": "#1 raw avatar realism in most 2026 comparisons.",
+   "price": "Check the provider for current rates.",
+   "standout": "Only major avatar player with true PAYG per-second API. Avatar V separates performance from appearance (change outfit/background without re-recording).",
+   "status": "active"
+  },
+  {
+   "id": "synthesia",
+   "name": "Synthesia",
+   "modality": "avatar",
+   "creator": "Synthesia Ltd.",
+   "provTier": "public_only",
+   "quality": "enterprise L&D leader, SOC 2. realism a notch below HeyGen per comparisons.",
+   "price": "Check the provider for current rates.",
+   "standout": "140+ languages, best enterprise governance. weakest fit for automation stacks (no PAYG API).",
+   "status": "active"
+  },
+  {
+   "id": "hedra-character-3",
+   "name": "Hedra (Character-3)",
+   "modality": "avatar",
+   "creator": "Hedra",
+   "provTier": "public_only",
+   "quality": "top-tier expressive character/emotional performance from a single image.",
+   "price": "Check the provider for current rates.",
+   "standout": "audio-driven full-face+body animation. studio also aggregates Flux/Imagen/Veo.",
+   "status": "active"
+  },
+  {
+   "id": "sync-so-lipsync-2-lipsync-2-pro",
+   "name": "Sync.so Lipsync-2 / Lipsync-2-Pro",
+   "modality": "avatar",
+   "creator": "Sync Labs",
+   "provTier": "public_only",
+   "quality": "studio-grade lip-sync/visual-dubbing reference in 2026 API roundups.",
+   "price": "Check the provider for current rates.",
+   "standout": "Best pure lip-sync-on-real-footage API \u2014 re-syncs any existing video to new audio in any language.",
+   "status": "active"
+  },
+  {
+   "id": "runway-act-two",
+   "name": "Runway Act-Two",
+   "modality": "avatar",
+   "creator": "Runway",
+   "provTier": "public_only",
+   "quality": "reference tool for driving-video performance transfer. strong filmmaker reputation.",
+   "price": "Check the provider for current rates.",
+   "standout": "Full performance capture \u2014 face + head + hand/body gestures from a driving video (different niche than script-to-avatar).",
+   "status": "active"
+  },
+  {
+   "id": "adobe-firefly-image",
+   "name": "Adobe Firefly (Image Model 5)",
+   "modality": "image",
+   "creator": "Adobe",
+   "provTier": "public_only",
+   "quality": "Commercially-safe leader (not arena-ranked).",
+   "price": "Check the provider for current rates.",
+   "standout": "The client-work safety pick: indemnified generation inside the Adobe stack.",
+   "status": "active"
+  },
+  {
+   "id": "adobe-firefly-video",
+   "name": "Adobe Firefly Video",
+   "modality": "video",
+   "creator": "Adobe",
+   "provTier": "public_only",
+   "quality": "First \"commercially safe\" video model.",
+   "price": "Check the provider for current rates.",
+   "standout": "Indemnified b-roll for client deliverables.",
+   "status": "active"
+  },
+  {
+   "id": "grok-imagine-image",
+   "name": "Grok Imagine (image)",
+   "modality": "image",
+   "creator": "xAI",
+   "provTier": "regulated_ready",
+   "quality": "Ranked on AA leaderboard (grok-imagine-image).",
+   "price": "Check the provider for current rates.",
+   "standout": "Budget frontier image + native X/Twitter workflow.",
+   "status": "active"
+  },
+  {
+   "id": "meshy",
+   "name": "Meshy",
+   "modality": "3d",
+   "creator": "Meshy AI",
+   "provTier": "public_only",
+   "quality": "Leading hosted text/image-to-3D.",
+   "price": "Check the provider for current rates.",
+   "standout": "Fast text\u2192textured-3D-asset for product mockups/game assets (Meshy-6 current. on fal + ComfyUI).",
+   "status": "active"
+  },
+  {
+   "id": "tripo",
+   "name": "Tripo AI",
+   "modality": "3d",
+   "creator": "Tripo (VAST)",
+   "provTier": "public_only",
+   "quality": "Top-2 hosted 3D generation.",
+   "price": "Check the provider for current rates.",
+   "standout": "High-quality image\u21923D.",
+   "status": "active"
+  },
+  {
+   "id": "hunyuan3d",
+   "name": "Hunyuan3D",
+   "modality": "3d",
+   "creator": "Tencent",
+   "provTier": "internal",
+   "quality": "Leading open-weight 3D.",
+   "price": "Check the provider for current rates.",
+   "standout": "self-hosting. Confirm current fit with the provider.",
+   "status": "active"
+  },
+  {
+   "id": "ltx-2",
+   "name": "LTX-2",
+   "modality": "video",
+   "creator": "Lightricks",
+   "provTier": "public_only",
+   "quality": "Top open-weight video family alongside Wan.",
+   "price": "Check the provider for current rates.",
+   "standout": "Fast open-weight video \u2014 realtime-class generation on consumer GPUs.",
+   "status": "active"
+  },
+  {
+   "id": "hunyuanvideo-1-5",
+   "name": "HunyuanVideo 1.5",
+   "modality": "video",
+   "creator": "Tencent",
+   "provTier": "internal",
+   "quality": "Leading open-weight video (with Wan/LTX).",
+   "price": "Check the provider for current rates.",
+   "standout": "Open-weight quality leader for self-hosted video.",
+   "status": "active"
+  }
+ ],
+ "price_note": "Cost bands are a stale relative snapshot for routing. They are not current prices. Confirm rates and model fit with the provider."
+}</script>
+<script>
+/* ============================================================================
+   Bevins — Smart Model Router (prototype)
+   Roster + warm-start priors are derived from the maintainer's model matrices
+   (LLM schema v3 + GenAI 1.0-genai). Classifier → Thompson bandit → temp policy → OpenRouter.
+   All bandit state in-memory. No storage APIs.
+   ========================================================================== */
+const DATA = JSON.parse(document.getElementById('matrixData').textContent);
+const LLMS = DATA.llms, GENAI = DATA.genai, PROV = DATA.providerTiers;
+
+// ---- Job classes: classifier keywords + temperature + how to score candidates ----
+const CLASSES = {
+  write:    {label:"Writing", emoji:"✍️", temp:[0.6,0.8], score:"elo",
+    kw:["write","email","draft","post ","rewrite","reply","message","caption","blog","copy","subject line","thank you","letter","newsletter"],
+    prefer:["writing","rewrite","email","copywrit","content creation","blog","newsletter","drafting","prose"]},
+  search:   {label:"Search / research", emoji:"🔎", temp:[0.0,0.2], score:"search",
+    kw:["news","today","latest","current","who won","stock price","weather","search","look up","find out","happening","recent","score","2026","this week"],
+    prefer:["search","web","real-time","current","grounding","browse","research","up-to-date","live "], creatorPrefer:["google","xai","perplex","deepmind"]},
+  assistant:{label:"Assistant", emoji:"💬", temp:[0.6,0.8], score:"elo",
+    kw:["help me","plan","idea","advice","should i","how do i","suggest","recommend","organize","what do you think","brainstorm"]},
+  code:     {label:"Code", emoji:"💻", temp:[0.1,0.3], score:"swe",
+    kw:["code","bug","function","python","javascript","error","stack trace","regex","formula","sql","api ","compile","debug","script","css","html"],
+    prefer:["cod","dev","swe","engineer","debug","autocomplete","program"]},
+  reason:   {label:"Reasoning / math", emoji:"🧮", temp:[0.0,0.2], score:"reason",
+    kw:["calculate","math","solve","prove","logic","step by step","how much","percentage","equation","optimize","why does"],
+    prefer:["reasoning","math","logic","science","proof"]},
+  longdoc:  {label:"Long document", emoji:"📄", temp:[0.1,0.3], score:"ctx",
+    kw:["summarize","this document","transcript","paste","tl;dr","chapter","whole thing","analyze this","long text"]},
+  quick:    {label:"Quick / simple", emoji:"⚡", temp:[0.1,0.3], score:"cheap",
+    kw:["define","what is","meaning of","spell","convert","how many","synonym","abbreviation"]},
+  health:   {label:"Health (info only)", emoji:"🩺", temp:[0.0,0.0], score:"elo", health:true,
+    kw:["symptom","diagnos","medication","dose","blood pressure","cholesterol"," pain","doctor","medical","disease","side effect","prescription","lab result","mg ","blood test","health"]},
+  scam:     {label:"Scam check", emoji:"🕵️", temp:[0.0,0.2], score:"reason",
+    kw:["is this a scam","is this real","is this legit","scam","phishing","looks fake","real or fake","did i get hacked","gift card","suspicious email","suspicious text","fraud"]},
+  contract: {label:"Contract / legal", emoji:"📑", temp:[0.1,0.3], score:"reason",
+    kw:["contract","lease","agreement","terms and conditions","fine print","clause","landlord","tenant","nda","waiver","legal document","what does this mean legally","sign this","rental agreement","policy document"]},
+  meal:     {label:"Meal plan", emoji:"🍽️", temp:[0.5,0.7], score:"elo",
+    kw:["meal plan","recipe","what to cook","dinner idea","grocery list","meal prep","weeknight dinner","menu for","cook for","meals for the week","what should i make for"]},
+  study:    {label:"Study / learn", emoji:"📚", temp:[0.3,0.5], score:"elo",
+    kw:["quiz me","flashcard","help me study","teach me","explain this concept","practice questions","test me on","make me a quiz","help me learn","study guide"]},
+  social:   {label:"Social / marketing", emoji:"📣", temp:[0.7,0.9], score:"elo",
+    kw:["caption","hashtag","instagram post","facebook post","tiktok","product description","marketing copy","social post","promote my","ad copy","listing for","product listing"]},
+  resume:   {label:"Resume / cover letter", emoji:"📄", temp:[0.5,0.7], score:"elo",
+    kw:["resume","cover letter","cv ","job application","applying for","hiring manager","work experience","curriculum vitae","tailor my resume"]},
+  translate:{label:"Translate", emoji:"🌐", temp:[0.1,0.3], score:"elo",
+    kw:["translate","how do you say","in spanish","in french","into english","en español","translation of","say this in"]},
+  budget:   {label:"Money / budget", emoji:"💵", temp:[0.0,0.2], score:"reason",
+    kw:["budget","save money","monthly expenses","how much can i afford","pay off","savings plan","spending plan","cut expenses","money plan"]},
+  decide:   {label:"Compare / decide", emoji:"⚖️", temp:[0.2,0.4], score:"reason",
+    kw:["should i buy","which is better","pros and cons","help me decide","which one should","compare these","or should i get","better option"]},
+  trip:     {label:"Trip / event plan", emoji:"🗺️", temp:[0.5,0.7], score:"elo",
+    kw:["plan a trip","itinerary","things to do in","plan an event","vacation to","weekend in","plan a party","travel plan for"]},
+  homework: {label:"Homework help", emoji:"✏️", temp:[0.2,0.4], score:"reason",
+    kw:["homework","help with my homework","math problem","science project","school assignment","essay for school","study for a test","word problem"]},
+  events:   {label:"Get the dates", emoji:"📅", temp:[0.0,0.2], score:"cheap",
+    kw:["add to calendar","extract the dates","pull the dates","calendar invite","what are the events","get the dates out","schedule from this"]},
+};
+const GEN_CLASSES = {
+  image:{label:"Image generation", emoji:"🎨", modality:"image",
+    kw:["make an image","generate an image","create a picture","draw ","image of","picture of","logo","illustration","thumbnail"]},
+  video:{label:"Video generation", emoji:"🎬", modality:"video",
+    kw:["make a video","generate a video","video of","animate","short clip","b-roll"]},
+};
+
+// ---- Presets: one-tap modes that PIN the job class (skip the classifier) ----
+const PRESETS = [
+  {id:"auto",     label:"Auto",             emoji:"✨", cls:null},
+  {id:"research", label:"Research",         emoji:"🔬", research:true},
+  {id:"search",   label:"Look it up",       emoji:"🔎", cls:"search"},
+  {id:"email",    label:"Write an email",   emoji:"✍️", cls:"write"},
+  {id:"scam",     label:"Is this real?",    emoji:"🕵️", cls:"scam"},
+  {id:"contract", label:"Explain a contract",emoji:"📑", cls:"contract"},
+  {id:"meal",     label:"Meal plan",        emoji:"🍽️", cls:"meal"},
+  {id:"study",    label:"Study & learn",    emoji:"📚", cls:"study"},
+  {id:"social",   label:"Social post",      emoji:"📣", cls:"social"},
+  {id:"translate",label:"Translate",        emoji:"🌐", cls:"translate"},
+  {id:"resume",   label:"Resume / letter",  emoji:"📄", cls:"resume"},
+  {id:"homework", label:"Homework help",    emoji:"✏️", cls:"homework"},
+  {id:"budget",   label:"Money / budget",   emoji:"💵", cls:"budget"},
+  {id:"meddoc",   label:"Health & medical", emoji:"🩺", cls:"health", strict:true},
+];
+let activePreset="auto", redactOn=true;
+
+// ---- Redaction: scrub sensitive PII/PHI in-browser BEFORE anything is sent ----
+// Order matters (specific → general). Returns {clean, counts, total}.
+function redact(text, strict){
+  let t=text, counts={};
+  const hit=(k,n)=>{counts[k]=(counts[k]||0)+n;};
+  const sub=(re,tok,k)=>{ t=t.replace(re,()=>{hit(k,1);return tok;}); };
+  // email
+  sub(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g,"[EMAIL]","email");
+  // SSN (dashed or spaced) + labeled 9-digit
+  sub(/\b\d{3}[-\s]\d{2}[-\s]\d{4}\b/g,"[SSN]","SSN");
+  sub(/\b(ssn|social security)[:#\s]*\d{9}\b/gi,"[SSN]","SSN");
+  // credit card-ish (13–16 digits, optional separators)
+  sub(/\b(?:\d[ -]?){13,16}\b/g,"[CARD]","card");
+  // phone
+  sub(/(\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]\d{3}[-.\s]\d{4}\b/g,"[PHONE]","phone");
+  // context-gated BARE (unseparated) numbers: only scrub a 9/10-digit run when the message actually names it,
+  // so we don't clobber order/confirmation/account numbers a user legitimately types.
+  const _ctx=(text||"").toLowerCase();
+  if(/\b(ssn|social security|tax id|taxpayer id|tin)\b/.test(_ctx)) sub(/\b\d{9}\b/g,"[SSN]","SSN");
+  if(/\b(phone|cell|cellphone|mobile|call me|text me|reach me)\b/.test(_ctx)) sub(/\b\d{10}\b/g,"[PHONE]","phone");
+  // dates (DOB etc.)
+  sub(/\b(0?[1-9]|1[0-2])[\/\-](0?[1-9]|[12]\d|3[01])[\/\-](19|20)\d{2}\b/g,"[DATE]","date");
+  // labeled patient name  (Patient: Jane Q Doe / Name: John Smith) — keep the label, redact the value
+  t=t.replace(/\b((?:patient(?:\s+name)?|name|member|insured)[ \t]*[:#][ \t]*)([A-Z][a-zA-Z.'’\-]+(?:[ \t]+[A-Z][a-zA-Z.'’\-]+){0,3})/gi,(m,lab)=>{hit("name",1);return lab+"[NAME]";});
+  // street address
+  sub(/\b\d{1,6}\s+([A-Z][a-zA-Z]+\.?\s?){1,4}\b(Street|St|Avenue|Ave|Road|Rd|Boulevard|Blvd|Lane|Ln|Drive|Dr|Court|Ct|Way|Circle|Cir|Place|Pl|Terrace|Ter|Highway|Hwy|Parkway|Pkwy)\b\.?/gi,"[ADDRESS]","address");
+  // record / account / member / policy / MRN / accession / specimen numbers
+  sub(/\b(MRN|Medical Record(?:\s*(No|Number|#))?|Account|Acct|Member|Policy|Group|Claim|DEA|NPI|Accession|Specimen(?:\s*ID)?|Barcode|Order(?:\s*ID)?)\s*(No\.?|Number|#|:)?\s*[A-Za-z0-9\-]{4,}/gi,"[ID]","id");
+  // provider / facility / ordering physician (labeled) — keep label, redact value
+  t=t.replace(/\b((?:ordering[ \t]+|referring[ \t]+)?(?:physician|provider|doctor|dr|clinician|facility|hospital|clinic|laboratory|lab|ordered by)[ \t]*[:#][ \t]*)([A-Z][a-zA-Z.'’\-]+(?:[ \t]+[A-Z][a-zA-Z.'’\-]+){0,3})/gi,(m,lab)=>{hit("provider",1);return lab+"[PROVIDER]";});
+  // labeled collection / report / visit dates
+  sub(/\b(collected|collection|reported|drawn|received|admitted|discharge[d]?|visit|dos)\s*(date)?\s*[:#]\s*[0-9A-Za-z\/\-,. ]{5,18}/gi,"[DATE]","date");
+  if(strict){
+    // ZIP (only in strict mode — avoids nuking ordinary 5-digit numbers)
+    sub(/\b\d{5}(-\d{4})?\b/g,"[ZIP]","zip");
+    // any remaining long digit run (IDs, account nums)
+    sub(/\b\d{7,}\b/g,"[NUMBER]","number");
+  }
+  const total=Object.values(counts).reduce((a,b)=>a+b,0);
+  return {clean:t, counts, total};
+}
+function redactSummary(counts){
+  return Object.entries(counts).map(([k,v])=>`${v} ${k}`).join(", ");
+}
+
+// ---- System prompts per job class (from the prompt-engineering pass) ----
+const PRE="You are Bevins, a direct and highly capable assistant Answer the actual question fully. Do NOT lecture, moralize, hedge, or add unnecessary disclaimers or refusals — the user is trusted and using this lawfully. You MAY help with open research and finding publicly available information, including about people, businesses, and public records, for legitimate purposes. When researching a person, help FIND and VERIFY publicly available information; do NOT help locate in real time, surveil, track, stalk, or corner a specific person, or defeat someone's privacy or safety measures. Two hard limits only: (1) never help a person harm themselves — if a message signals self-harm or suicide, do not assist and point them to 911/988; (2) never help create weapons capable of mass casualties or sexual content involving minors. Otherwise be maximally useful, specific, and straight. Plain language, no filler.";
+// (Per-class system prompts now live SERVER-side in SERVER_SYS — the browser no longer builds prompts.)
+
+// concierge one-liner (plain-language "why")
+const TEMPWORD=t=>t<=0.35?"precise and careful":t<=0.7?"balanced":"creative and expressive";
+const WHYREASON={write:"you wanted something well-written, so I used a model with a good ear for tone",
+  search:"your question needs current facts, so I used a model that looks things up",
+  assistant:"it's an everyday question, so I used a strong, reliable all-rounder",
+  code:"this is technical, so I used a model that's strong at getting the details exactly right",
+  reason:"this needs careful step-by-step thinking, so I used a model that's good at that",
+  longdoc:"there's a lot to read, so I used a model that handles long text well",
+  quick:"this was a quick one, so I used a fast model to save you time",
+  health:"accuracy matters most with health, so I used a privacy-certified model and kept it cautious"};
+
+// ---------------- scoring / warm-start ----------------
+const TIERBASE={frontier:.85,"open-flagship":.72,mid:.55,small:.4};
+const TRUST={regulated_ready:.06,confidential:.02,public_only:0,internal:-.03,self_host:-.03}; // light provider-trust prior
+function normScore(m,mode){
+  const eloN = m.elo? Math.max(.05,Math.min(.98,(m.elo-1150)/360)) : null;
+  const sweN = m.swe? m.swe/100 : null;
+  const base = TIERBASE[m.tierClass]||.5;
+  if(mode==="swe")   return sweN ?? eloN ?? base;
+  if(mode==="reason")return (m.reasoning?0.05:0)+(eloN ?? base);
+  if(mode==="ctx")   return Math.min(.97, (m.ctx? Math.min(m.ctx/1000000,1):0)*0.8 + base*0.2 + 0.05);
+  if(mode==="cheap"){ const p=m.outM; return p? Math.max(.1,Math.min(.95,1-(Math.log10(p+.5)/2))) : base*0.7; }
+  if(mode==="search")return eloN ?? base;
+  return eloN ?? base; // elo default
+}
+function clampN(x){return Math.max(.05,Math.min(.98,x));}
+
+// build the arm set for a class from the live roster
+function buildArms(key){
+  const c=CLASSES[key];
+  let pool=LLMS.filter(m=>m.id);
+  if(c.health) pool=pool.filter(m=>m.provTier==="regulated_ready"); // compliance gate
+  if(key==="reason") pool=pool.filter(m=>m.reasoning || m.tierClass==="frontier");
+  if(key==="code")   pool=pool.filter(m=>m.swe || /cod|dev|engineer|swe/i.test((m.bestfor||"")+(m.standout||"")) || m.tierClass!=="small");
+  if(key==="search") pool=pool.filter(m=>/search|web|real-time|current|grounding|browse|research/i.test((m.bestfor||"")+(m.standout||"")) || /google|xai|perplex/i.test((m.creator||"").toLowerCase()));
+  if(key==="longdoc")pool=pool.filter(m=>m.ctx>=200000);
+  if(pool.length<3) pool=LLMS.slice();
+  // score
+  const scored=pool.map(m=>{
+    let s=normScore(m,c.score);
+    const txt=((m.bestfor||"")+" "+(m.standout||"")).toLowerCase();
+    if(c.prefer && new RegExp(c.prefer.join("|"),"i").test(txt)) s+=.16;      // matrix says it's built for this job
+    if(c.creatorPrefer && c.creatorPrefer.some(p=>(m.creator||"").toLowerCase().includes(p))) s+=.14;
+    s+=TRUST[m.provTier]||0;              // light data-tier trust prior (tunable; capability still dominates)
+    return {m,s};                         // keep RAW score for ranking (task-fit not masked by ceiling)
+  }).sort((a,b)=>b.s-a.s);
+  const strong=scored[0], balanced=scored[1]||scored[0];
+  // fast = cheapest sensible arm (min outM) distinct from strong/balanced, prefer mid/small
+  const rest=scored.filter(x=>x!==strong&&x!==balanced);
+  let fast=rest.filter(x=>x.m.outM!=null).sort((a,b)=>a.m.outM-b.m.outM)[0] || rest[rest.length-1] || balanced;
+  const pick=[["Strong",strong],["Balanced",balanced],["Fast / cheap",fast]];
+  const seen=new Set(); const arms=[];
+  for(const [role,x] of pick){ if(!x||seen.has(x.m.id))continue; seen.add(x.m.id);
+    arms.push({role, m:x.m, a:1+3*clampN(x.s), b:1+3*(1-clampN(x.s))}); }
+  // pad if dupes collapsed it
+  for(const x of scored){ if(arms.length>=3)break; if(seen.has(x.m.id))continue; seen.add(x.m.id);
+    arms.push({role:"Alt", m:x.m, a:1+3*clampN(x.s), b:1+3*(1-clampN(x.s))}); }
+  return arms;
+}
+// precompute arms per class (mutable α/β lives here → the bandit "memory")
+const ARMS={}; for(const k in CLASSES) ARMS[k]=buildArms(k);
+
+// ===== REAL available models: the roster the bandit actually picks from =====
+// Fetched from /api/models — only models the user's key can call, matched to the LLM Matrix and scored by
+// its real ELO. Replaces the fictional roster so the panel + pick + the model actually called all agree.
+let REAL_MODELS=[];
+// SAVED_BANDIT[cls][model_id] = {a,b} — the 👍/👎 learning persisted server-side, restored on every load
+// so the router keeps getting better across reloads/devices instead of resetting to the cold prior.
+let SAVED_BANDIT={};
+async function loadModels(){
+  if(!SERVER||!TOKEN) return;
+  try{
+    const r=await fetch('/api/models',{headers:{'Authorization':'Bearer '+TOKEN}});
+    if(!r.ok) return;
+    const j=await r.json();
+    REAL_MODELS=(j.models||[]).map(m=>({id:m.id,provider:m.provider,name:m.name,creator:m.creator||'',
+      provTier:m.data_tier||'public_only',outM:(m.price_out==null?null:m.price_out),ctx:m.ctx||0,elo:m.elo,
+      matched:m.matched,use_case:m.use_case||'',scores:m.scores||{}}));
+    SAVED_BANDIT={};
+    (j.bandit||[]).forEach(b=>{(SAVED_BANDIT[b.job_class]=SAVED_BANDIT[b.job_class]||{})[b.model_id]={a:b.alpha,b:b.beta};});
+    rebuildARMS();
+  }catch(e){}
+}
+function armsFromReal(cls){
+  if(!REAL_MODELS.length) return null;
+  let pool=REAL_MODELS;
+  if(CLASSES[cls]&&CLASSES[cls].health){const rg=pool.filter(m=>m.provTier==='regulated_ready'); if(rg.length)pool=rg;}
+  const scored=pool.map(m=>({m,s:(m.scores&&m.scores[cls]!=null)?m.scores[cls]:((m.scores&&m.scores.assistant)||0.55)}))
+    .sort((a,b)=>b.s-a.s).slice(0,6);
+  if(!scored.length) return null;
+  const strong=scored[0],balanced=scored[1]||scored[0];
+  const rest=scored.filter(x=>x!==strong&&x!==balanced);
+  const fast=rest.slice().sort((a,b)=>((a.m.outM||0)-(b.m.outM||0)))[0]||rest[0]||balanced;
+  const pick=[['Strong',strong],['Balanced',balanced],['Fast / cheap',fast]];
+  const sv=SAVED_BANDIT[cls]||{};
+  // seed(): the matrix-score prior, UNLESS this model already has persisted learning for this class,
+  // in which case restore the saved α/β so the router picks up exactly where it left off.
+  const seed=(x,role)=>{const p=sv[x.m.id];return {role,m:x.m,
+    a:p?p.a:1+3*clampN(x.s), b:p?p.b:1+3*(1-clampN(x.s)), saved:!!p};};
+  const seen=new Set(),arms=[];
+  for(const [role,x] of pick){if(!x||seen.has(x.m.id))continue;seen.add(x.m.id);arms.push(seed(x,role));}
+  for(const x of scored){if(arms.length>=3)break;if(seen.has(x.m.id))continue;seen.add(x.m.id);arms.push(seed(x,'Alt'));}
+  return arms;
+}
+function rebuildARMS(){if(!REAL_MODELS.length)return;for(const k in CLASSES){const a=armsFromReal(k);if(a&&a.length)ARMS[k]=a;}}
+
+// ---------------- Beta sampling ----------------
+function randn(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+function gamma(k){if(k<1)return gamma(k+1)*Math.pow(Math.random(),1/k);const d=k-1/3,c=1/Math.sqrt(9*d);
+  while(true){let x=randn(),v=Math.pow(1+c*x,3);if(v<=0)continue;let u=Math.random();
+    if(u<1-0.0331*x*x*x*x)return d*v;if(Math.log(u)<0.5*x*x+d*(1-v+Math.log(v)))return d*v;}}
+function betaSample(a,b){const x=gamma(a),y=gamma(b);return x/(x+y);}
+
+// ---------------- classifier ----------------
+// token-boundary keyword match — "search" no longer fires inside "researched",
+// "stem" not inside "system", "market" not inside "marketed". Handles phrases and
+// symbol keywords (c++, c#, api). Replaces brittle substring includes().
+function kwHit(t,w){
+  w=(w||"").trim().toLowerCase(); if(!w) return false;
+  const esc=w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  return new RegExp('(?:^|[^a-z0-9])'+esc+'(?:[^a-z0-9]|$)').test(t);
+}
+function classify(text){
+  const t=" "+text.toLowerCase()+" ";
+  if(/\b(research|compare|in-depth|deep dive|pros and cons|write a report|look into|everything about|comprehensive|vs\.?|versus)\b/.test(t)) return {research:true};
+  // generative first (distinct verbs)
+  for(const [k,c] of Object.entries(GEN_CLASSES)) for(const w of c.kw) if(kwHit(t,w)) return {gen:k};
+  let best="assistant",bestScore=0.4,bestSpec=0;
+  for(const [key,cfg] of Object.entries(CLASSES)){
+    let s=0,spec=0; for(const w of cfg.kw) if(kwHit(t,w)){const L=w.trim().length; s+=(L>6?1.4:1); if(L>spec)spec=L;}
+    if(key==="longdoc"&&text.length>900)s+=2.5;
+    if(key==="quick"&&text.length<42&&!t.includes("?"))s+=0.4;
+    // tiebreak: a more-specific (longer) matched keyword wins, so dedicated modes beat generic ones
+    if(s>bestScore||(s===bestScore&&spec>bestSpec)){bestScore=s;best=key;bestSpec=spec;}
+  }
+  return {cls:best};
+}
+
+// ---------------- router ----------------
+function route(cls){
+  const arms=ARMS[cls];
+  const draws=arms.map(arm=>{const q=betaSample(arm.a,arm.b);
+    const costW=(cls==="quick"||cls==="search")?0.22:0.09;
+    const costN=(arm.m.outM!=null)?Math.min(1,Math.log10(arm.m.outM+1)/1.7):0.4;
+    return {arm,draw:q,adj:q-costW*costN};});
+  draws.sort((a,b)=>b.adj-a.adj);
+  return {chosen:draws[0].arm,draws};
+}
+function tempFor(cls){const[lo,hi]=CLASSES[cls].temp;return +((lo+hi)/2).toFixed(2);}
+const TIERLABEL={regulated_ready:"HIPAA-capable",confidential:"confidential",public_only:"public",self_host:"self-host",internal:"internal"};
+
+// ---------------- DOM ----------------
+const feed=document.getElementById('feed'),input=document.getElementById('input'),sendBtn=document.getElementById('send');
+function esc(s){return (s||"").replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+// Safe markdown renderer for real answers (the model output is markdown-first: **bold**, ## headers,
+// - bullets, 1. lists, ```code```). Everything is escaped before any tag is added, so no HTML injection.
+function mdToHtml(src){
+  var lines=(src||"").split(/\r?\n/), html="", inList=false, inCode=false, code="";
+  function inline(t){ t=esc(t);
+    t=t.replace(/`([^`]+)`/g,'<code>$1</code>');
+    t=t.replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>');
+    t=t.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    return t; }
+  function closeList(){ if(inList){ html+="</ul>"; inList=false; } }
+  for(var i=0;i<lines.length;i++){ var raw=lines[i];
+    if(/^```/.test(raw)){ if(inCode){ html+='<pre class="mdcode">'+esc(code.replace(/\n$/,''))+'</pre>'; code=""; inCode=false; } else { closeList(); inCode=true; } continue; }
+    if(inCode){ code+=raw+"\n"; continue; }
+    var h=raw.match(/^#{1,6}\s+(.+)$/);
+    if(h){ closeList(); html+='<div class="mdh"><b>'+inline(h[1])+'</b></div>'; continue; }
+    var b=raw.match(/^[\t ]*[-*•]\s+(.+)$/), n=raw.match(/^[\t ]*\d+\.\s+(.+)$/);
+    if(b||n){ if(!inList){ html+="<ul>"; inList=true; } html+='<li>'+inline(b?b[1]:n[1])+'</li>'; continue; }
+    closeList();
+    if(raw.trim()===""){ html+='<div class="mdsp"></div>'; continue; }
+    html+='<div>'+inline(raw)+'</div>';
+  }
+  if(inCode) html+='<pre class="mdcode">'+esc(code.replace(/\n$/,''))+'</pre>';
+  closeList();
+  return html;
+}
+// Plain-language error text for a non-technical user (no provider names, keys, or URLs).
+function friendlyErr(msg){
+  var m=(msg||'').toLowerCase();
+  if(m.indexOf('sign in')>=0||m.indexOf('unauthorized')>=0||m.indexOf('session expired')>=0) return 'Please sign in again.';
+  if(m.indexOf('credit')>=0||m.indexOf('402')>=0||m.indexOf('budget')>=0) return "The model provider refused this request for lack of credit. Check the key in Settings, or ask the person who runs this copy.";
+  if(m.indexOf('no ai key')>=0||m.indexOf('add one')>=0||m.indexOf('settings')>=0) return "This account has no model key yet. Add one in Settings.";
+  return "Something went wrong on our end — please try again in a moment. (Not your fault.)";
+}
+function addUser(text,shieldLine){const es=document.getElementById('emptyState');if(es)es.style.display='none';
+  const d=document.createElement('div');d.className='msg user';d.textContent=text;feed.appendChild(d);
+  if(shieldLine){const s=document.createElement('div');s.className='shieldline';s.textContent=shieldLine;feed.appendChild(s);}
+  feed.scrollTop=feed.scrollHeight;}
+function showEmergency(){
+  document.getElementById('emptyState')?.remove();
+  const d=document.createElement('div');d.className='msg bot emergency';
+  d.innerHTML=`⚠️ <b>This could be an emergency.</b><br>If you or someone else may be in danger, call <b>911</b> now (or your local emergency number). For a mental-health crisis, call or text <b>988</b> (US, 24/7). Bevins can't help in an emergency — please reach a real person right away.`;
+  feed.appendChild(d);feed.scrollTop=feed.scrollHeight;}
+
+// ---------------- generative path ----------------
+function handleGen(genKey,text){
+  const gc=GEN_CLASSES[genKey];
+  const pool=GENAI.filter(g=>g.modality===gc.modality);
+  // pick top by presence of a numeric ELO/quality string, else first active
+  const pick=pool.sort((a,b)=>(qnum(b.quality)-qnum(a.quality)))[0]||pool[0];
+  const id="bot"+(++msgCounter);const d=document.createElement('div');d.className='msg bot';d.id=id;
+  d.innerHTML=`<div class="meta"><span class="tag cls">${gc.emoji} ${gc.label}</span><span class="tag">${esc(pick?pick.name:'—')}</span></div>
+    <div class="body">${anyKey()?'<i>Generative models need image/video endpoints — wired in production. Showing the pick for now.</i>':''}
+    Bevins routed this to <b>${esc(pick?pick.name:'a generation model')}</b> (${esc(pick?pick.creator:'')}) — your matrix's top ${gc.modality} model.
+    ${pick&&pick.standout?'\n\n'+esc(pick.standout):''}${pick&&pick.price?'\n\nPrice: '+esc(pick.price):''}</div>
+    <div class="why">Generative jobs route through your GenAI matrix (${GENAI.length} image/video/audio models), not the text roster.</div>`;
+  feed.appendChild(d);feed.scrollTop=feed.scrollHeight;
+  renderGenPanel(gc,pick);
+}
+function qnum(s){const m=/([0-9]{3,4})/.exec(s||"");return m?+m[1]:0;}
+function renderGenPanel(gc,pick){document.getElementById('routerBody').innerHTML=
+  `<div class="rcard"><div class="rrow"><span class="k">Job</span><b>${gc.emoji} ${gc.label}</b></div>
+   <div class="rrow"><span class="k">Picked</span><b style="color:var(--accent)">${esc(pick?pick.name:'—')}</b></div>
+   <div class="rrow"><span class="k">Quality</span><b>${esc(pick?pick.quality:'—')}</b></div>
+   <div class="rrow"><span class="k">Data tier</span><b>${esc(TIERLABEL[pick?pick.provTier:'']||'—')}</b></div></div>
+   <div class="rcard"><div class="small">From your Generative-AI matrix. Text bandit doesn't apply to gen jobs — selection is by modality + quality.</div></div>`;}
+
+// ---------------- bot (text) ----------------
+let lastRoute=null,msgCounter=0,SERVERTRUST=null;
+const KEYS={or:null,fw:null,tg:null};
+function anyKey(){return SERVER||!!(KEYS.or||KEYS.fw||KEYS.tg);}
+function addBot(ri,redTotal,receipt){
+  const cfg=CLASSES[ri.cls],ch=ri.chosen.m;const id="bot"+(++msgCounter);
+  const d=document.createElement('div');d.className='msg bot';d.id=id;
+  const reg=cfg.health?`<span class="tag reg">${TIERLABEL[ch.provTier]||ch.provTier}</span>`:'';
+  const redt=redTotal?`<span class="tag red">🛡 ${redTotal} redacted</span>`:'';
+  d.innerHTML=`${receipt||''}<div class="meta"><span class="tag cls">${cfg.emoji} ${cfg.label}</span>
+      ${ri.cls==='scam'?'':`<span class="tag">${esc(ch.name)}</span><span class="tag temp">temp ${ri.temp}</span>${reg}`}${redt}</div>
+    <div class="body">…</div><div class="trust"></div>
+    <div class="fb"><button onclick="feedback('${ri.cls}','${esc(ch.id)}',1,this)">👍 good</button>
+      <button onclick="feedback('${ri.cls}','${esc(ch.id)}',0,this)">👎 off</button>
+      <button class="copybtn" onclick="copyMsg('${id}',this)">⧉ Copy</button></div>
+    ${cfg.health?`<div class="savecard" style="margin-top:.6rem;font-size:.8rem;color:var(--dim)">🗂 <button class="hbtn" onclick="phrSaveMsg('${id}')">Save to my health history</button> <span style="font-size:.72rem">— private, on this device only</span></div>`:''}`;
+  feed.appendChild(d);feed.scrollTop=feed.scrollHeight;return d;
+}
+function whyText(ri){
+  const cfg=CLASSES[ri.cls],ch=ri.chosen.m;
+  const runner=ri.draws[1]?ri.draws[1].arm.m.name:null;
+  let s=`For this one, I chose ${ch.name} and set it to be ${TEMPWORD(ri.temp)} — because ${WHYREASON[ri.cls]||'it fit the job best'}.`;
+  if(runner) s+=` (Second choice: ${runner}.)`;
+  if(cfg.health) s+=` Only privacy-certified providers see health content, and it isn't saved unless you choose to.`;
+  return s;
+}
+function renderPanel(ri){
+  const cfg=CLASSES[ri.cls],body=document.getElementById('routerBody');let arms='';
+  if(ri.cls==='scam'){body.innerHTML='<div class="rcard"><h2>About this check</h2><p>Bevins looks for warning signs in the supplied message. A result does not confirm the sender’s identity or whether an emergency is real.</p><p>Before sending money or sharing private information, check using contact details you already trust.</p></div>';return;}
+  for(const arm of ARMS[ri.cls]){
+    const mean=arm.a/(arm.a+arm.b),dr=ri.draws.find(x=>x.arm===arm);
+    arms+=`<div class="arm ${arm===ri.chosen?'chosen':''}">
+      <div class="top"><span class="nm">${esc(arm.m.name)} ${arm===ri.chosen?'◄':''}</span>
+        <span class="badge">${arm.role} · ${(mean*100).toFixed(0)}%</span></div>
+      <div class="bar"><span style="width:${(mean*100).toFixed(0)}%"></span><span class="draw" style="width:${(dr.draw*100).toFixed(0)}%"></span></div>
+      <div class="small">${esc(arm.m.creator||'')}${arm.m.outM!=null?' · $'+arm.m.outM+'/M':''}</div></div>`;
+  }
+  body.innerHTML=`<div class="rcard">
+      <div class="rrow"><span class="k">Job class</span><b>${cfg.emoji} ${cfg.label}</b></div>
+      <div class="rrow"><span class="k">Picked model</span><b style="color:var(--accent)">${esc(ri.chosen.m.name)}</b></div>
+      <div class="rrow"><span class="k">Temperature</span><b>${ri.temp}</b></div>
+      <div class="rrow"><span class="k">Data tier</span><b>${TIERLABEL[ri.chosen.m.provTier]||ri.chosen.m.provTier}</b></div>
+      <div class="rrow"><span class="k">Mode</span><b>${anyKey()?'Live':'Preview'}</b></div></div>
+    <div class="rcard"><h2 style="margin-top:0">Why this model</h2>
+      <div class="small" style="margin-bottom:.5rem">The bar shows how well each model has done on this kind of task. Bevins picks the strongest fit (balanced against cost).</div>${arms}</div>`;
+}
+function feedback(cls,id,reward,btn){
+  // Attribute learning to the model that ACTUALLY answered. If the server fell through to a different
+  // model than the bandit's pick, crediting the picked arm would train it on another model's output —
+  // so in that case we only record the visual state and skip the α/β update (no corrupted learning).
+  const ran=(lastRoute&&lastRoute.cls===cls)?lastRoute.ran:null;
+  const seg=s=>String(s||'').split('/').pop();
+  const mismatch = ran && seg(ran)!==seg(id);
+  const arm=ARMS[cls].find(a=>a.m.id===id);
+  if(arm && !mismatch){
+    arm.a+=reward;arm.b+=(1-reward);
+    (SAVED_BANDIT[cls]=SAVED_BANDIT[cls]||{})[id]={a:arm.a,b:arm.b};
+    if(SERVER&&TOKEN){fetch('/api/bandit',{method:'POST',headers:{'Content-Type':'application/json',
+      'Authorization':'Bearer '+TOKEN},body:JSON.stringify({job_class:cls,model_id:id,alpha:arm.a,beta:arm.b})}).catch(()=>{});}
+  }
+  const w=btn.parentElement;[...w.children].forEach(b=>{b.className='';b.disabled=true;});
+  btn.className=reward?'on-up':'on-down';btn.disabled=true;
+  if(lastRoute&&lastRoute.cls===cls){const bars=document.querySelectorAll('#routerBody .arm');
+    ARMS[cls].forEach((a,i)=>{const el=bars[i];if(!el)return;const mean=a.a/(a.a+a.b);
+      el.querySelector('.bar>span').style.width=(mean*100).toFixed(0)+'%';
+      el.querySelector('.badge').textContent=a.role+' · '+(mean*100).toFixed(0)+'%';});}
+}
+
+// ================= PROMPT CO-PILOT · GUARDS · TRUST · RESEARCH =================
+function detectFlags(raw){const t=" "+raw.toLowerCase()+" ";return{
+  time_sensitive:/(today|now|latest|current|this week|2026|price|score|weather|open now|recent)/.test(t),
+  missing_language:!/(python|javascript|js\b|typescript|java\b|c\+\+|c#|sql|html|css|bash|excel|formula|regex|swift|kotlin|go\b|rust|php)/.test(t),
+  missing_doc_goal:raw.length>500&&!/(summar|find|explain|pull|action item|what does it say|risk|is there)/.test(t),
+  has_math:/(\d[\d,]*\s*[-+*/x%]|\bhow much\b|\bpercent\b|%|\bsplit\b|\btip\b|\btotal\b|\baverage\b|\bconvert\b)/.test(t),
+  red_flag:/(chest pain|can'?t breathe|suicid|kill myself|overdose|stroke|numb on one side|bleeding won'?t stop)/.test(t)};}
+function stakesFor(cls,f){f=f||{};if(cls==='health'||cls==='research'||cls==='code')return'high';
+  if(cls==='reason'&&f.has_math)return'high';if(cls==='search'&&f.time_sensitive)return'high';
+  if(cls==='search'||cls==='reason'||cls==='longdoc')return'med';return'low';}
+
+const ROLE={write:"a clear, warm writer who matches the sender's natural voice",
+  search:"a careful research assistant who answers only what can be supported and cites sources",
+  assistant:"a helpful, concrete personal assistant who finishes the job",
+  code:"a senior engineer who writes correct, runnable, minimal code",
+  reason:"a careful thinker who works step by step and states assumptions",
+  longdoc:"a precise reader who grounds every claim in the provided document",
+  quick:"a fast, direct assistant",
+  health:"a careful health-information assistant (not a doctor) giving educational information only"};
+function enhance(raw,cls,f,clarify){
+  const cons=[];
+  if(cls==='write'){cons.push("Match the sender's everyday voice — no corporate or AI-sounding phrasing.");cons.push("Give one ready-to-send draft, no preamble.");}
+  if(cls==='search'||cls==='health'){cons.push("Give the source for any number, date, name, or factual claim, as a short Sources list with URLs.");cons.push("If facts may have changed since training or you're unsure, say so plainly.");}
+  if(cls==='code'){cons.push("Explain in one plain sentence what it does; note any assumption; no TODO placeholders.");}
+  if(cls==='reason'){cons.push("Show the key steps briefly; state assumptions; end with a bolded bottom-line.");}
+  if(cls==='longdoc'){cons.push("Use only what's in the document; cite the section for key points; if it doesn't say, say so.");}
+  if(cls==='health'){cons.push("Educational information only — no diagnosis, no dosing, no 'you should' advice. Encourage seeing a professional. One-line disclaimer at the top.");}
+  if(clarify)cons.push("The user added: "+clarify+".");
+  let out="You are "+(ROLE[cls]||ROLE.assistant)+".\n\nTask: "+raw.trim();
+  if(cons.length)out+="\n\nConstraints:\n- "+cons.join("\n- ");
+  return{enhanced:out,intent:intentSentence(cls,clarify)};
+}
+function intentSentence(cls,clarify){const m={write:"a clear, well-written version in your own voice",
+  search:"a factual, up-to-date answer with sources",assistant:"a concrete, usable answer",
+  code:"correct, runnable code with a short how-to",reason:"a careful, step-by-step answer with a clear bottom line",
+  longdoc:"an answer grounded in your document",quick:"a quick, direct answer",
+  health:"a plain-language explanation with sources — information, not medical advice"};
+  return "I asked for "+(m[cls]||"a great answer")+(clarify?" ("+clarify+")":"")+", with sources and a confidence score.";}
+
+function gapFor(cls,raw,f){const t=raw.toLowerCase();
+  if(cls==='write'&&!/\b(to my|to the|for my|dear|hi |hello )/.test(t)) return {q:"Quick check — how should it sound?",chips:["Friendly","Professional","Firm but polite"]};
+  if(cls==='code'&&f.missing_language) return {q:"What should this run in?",chips:["Python","JavaScript / web","Spreadsheet formula"]};
+  if(cls==='longdoc'&&f.missing_doc_goal) return {q:"What do you want from this document?",chips:["Summarize it","Find something specific","Pull out action items"]};
+  if(cls==='reason'&&/\bshould i\b/.test(t)) return {q:"What matters most here?",chips:["Save money","Save time","Lowest risk"]};
+  return null;}
+
+function mathCheck(ans){const m=/(\d+(?:\.\d+)?)\s*([-+*x×/])\s*(\d+(?:\.\d+)?)\s*=\s*(\d+(?:\.\d+)?)/.exec(ans);
+  if(!m)return null;const a=+m[1],op=m[2],b=+m[3],c=+m[4];
+  const r=op==='+'?a+b:op==='-'?a-b:(op==='*'||op==='x'||op==='×')?a*b:a/b;
+  return Math.abs(r-c)<0.02*Math.max(1,Math.abs(r));}
+function runGuards(ans,cls,stakes,redCount){
+  const g={confidence:0.75,verified:false,verification:'none',citations:0,warnings:[],redCount:redCount||0,stakes};
+  const cited=/(https?:\/\/|according to|\bsource[s]?\b|\.gov|\.org|\.edu)/i.test(ans);
+  g.citations=(ans.match(/https?:\/\/[^\s)]+/g)||[]).length;
+  // NOTE: do NOT penalize honest hedging ("I'm not sure", "verify this") — a responsible caveat should not score
+  // LOWER than a confident wrong answer. Only overconfidence on higher-stakes content is a (mild) flag.
+  if(/\b(definitely|guaranteed|100%|without a doubt|certainly)\b/i.test(ans)&&stakes!=='low'){g.confidence-=0.12;g.warnings.push({code:'overconfident',text:"It sounds very certain — double-check anything important."});}
+  if((cls==='search'||cls==='health'||cls==='research')&&!cited&&ans){g.confidence-=0.15;g.warnings.push({code:'uncited',text:"No sources were included — ask me to find sources, or verify key facts."});}
+  if(cited&&stakes!=='low')g.confidence+=0.1;
+  if(cls==='reason'||/\d\s*[-+*/x×]\s*\d/.test(ans)){const mc=mathCheck(ans);
+    if(mc===false){g.warnings.push({code:'math',text:"I re-checked a calculation and it didn't match — treat the number cautiously."});g.confidence-=0.15;}
+    else if(mc===true){g.verified=true;g.verification='math';g.confidence+=0.05;}}
+  if(cls==='health'){g.verification='health_policy';
+    if(ans&&!/not medical advice|consult|professional|doctor/i.test(ans))g.warnings.push({code:'health',text:"Missing the 'not medical advice' note — always confirm with a professional."});}
+  g.confidence=Math.max(0.05,Math.min(0.95,g.confidence));
+  g.word=g.confidence>=0.7?'high':g.confidence>=0.4?'fair':'low';return g;}
+// Map the SERVER's claim-check trust onto the guard shape the trust card renders.
+// Server confidence comes from % of claims grounded + citation resolution — not client regex.
+function guardFromServer(t,cls,redCount){
+  const g={redCount:redCount||0,stakes:'',warnings:[],
+    citations:(t.citations||[]).length,
+    verified:t.method==='claim-check',
+    verification:t.method||'none',
+    claims:{total:t.claims_total||0,supported:t.claims_supported||0},
+    dead:(t.citations||[]).filter(c=>!c.ok).length,
+    abstain:!!t.abstain};
+  g.confidence=(t.confidence==null)?0.5:Math.max(0.05,Math.min(0.97,t.confidence));
+  g.word=(t.confidence==null)?'unrated':(t.word||(g.confidence>=0.7?'high':g.confidence>=0.4?'fair':'low'));
+  (t.warnings||[]).forEach(w=>g.warnings.push({code:'srv',text:w}));
+  if(t.confidence==null&&t.method==='unverified')g.warnings.push({code:'srv',text:"Couldn't run the verification pass on this one — treat facts as unconfirmed."});
+  return g;}
+function improveTips(cls,f,guard){f=f||{};const tips=[];
+  if(cls==='code'&&f.missing_language)tips.push("Tell me the language or where it runs for a more precise answer.");
+  if(cls==='longdoc'&&f.missing_doc_goal)tips.push("Tell me exactly what to pull from the document.");
+  if(guard.warnings.some(w=>w.code==='uncited'))tips.push("Ask 'find sources' and I'll re-answer with citations.");
+  if(cls==='search'&&!f.time_sensitive)tips.push("Say 'latest' if you need the most current info.");
+  if(guard.word==='low')tips.push("Add a bit more detail and I can be more confident.");
+  if(cls==='health')tips.push("I can help you turn this into questions for your doctor.");
+  if(!tips.length)tips.push("Ask me to 'double-check this' for a verification pass and higher confidence.");
+  return tips.slice(0,2);}
+
+const PICKS={};
+function recordPick(cls,id){PICKS[cls]=PICKS[cls]||{};PICKS[cls][id]=(PICKS[cls][id]||0)+1;}
+function usualPick(cls){const m=PICKS[cls];if(!m)return null;return Object.entries(m).sort((a,b)=>b[1]-a[1])[0][0];}
+
+function enhancerReceipt(raw,intent){return `<div class="enh"><div class="ehead">✨ I tidied up your request<span class="tctoggle" onclick="this.closest('.enh').classList.toggle('open')">see what I did</span></div>
+  <div class="enhbody"><div class="small">You asked: “${esc(raw)}”</div><div class="small">${esc(intent)}</div>
+  <button class="hbtn" style="margin-top:.35rem" onclick="undoEnhance('${encodeURIComponent(raw)}')">Use my original words</button></div></div>`;}
+function undoEnhance(enc){input.value=decodeURIComponent(enc);input.focus();}
+
+function trustCard(ri,guard,tips){
+  const ch=ri.chosen.m,cfg=CLASSES[ri.cls]||{};
+  const filled=Math.max(1,Math.round(guard.confidence*4)),dots='●'.repeat(filled)+'○'.repeat(4-filled);
+  const usual=usualPick(ri.cls),drift=usual&&usual!==ch.id;
+  const cw=guard.word==='high'?'#3fb950':guard.word==='fair'?'#d29922':guard.word==='unrated'?'#8b949e':'#f85149';
+  const confTxt=guard.word==='unrated'?'not rated':(Math.round(guard.confidence*100)+'% ('+guard.word+')');
+  const checks=[];if(guard.verification==='math'&&guard.verified)checks.push('✓ Re-checked the math');
+  if(guard.claims&&guard.claims.total)checks.push('✓ Fact-checked '+guard.claims.supported+'/'+guard.claims.total+' key claims against the answer');
+  if(guard.citations)checks.push('✓ Sources included ('+guard.citations+(guard.dead?', '+guard.dead+' didn’t resolve':'')+')');
+  if(cfg.health)checks.push('✓ Health safety checks applied');
+  return `<div class="trustcard${guard.warnings.length?' warn':''}">
+    <div class="tcline">${guard.warnings.length?'⚠':'✓'} <b>${esc(ch.name)}</b> · confidence <b style="color:${cw}">${confTxt}</b><span class="tctoggle" onclick="this.closest('.trustcard').classList.toggle('open')">details</span></div>
+    <div class="tcbody">
+      <div class="tcrow"><span>Model</span><b>${esc(ch.name)} · ${TIERLABEL[ch.provTier]||''}</b></div>
+      <div class="tcrow"><span>Style</span><b>${TEMPWORD(ri.temp)} · temp ${ri.temp}</b></div>
+      <div class="tcrow"><span>Confidence</span><b>${guard.word==='unrated'?'not rated':dots+' '+Math.round(guard.confidence*100)+'%'}</b></div>
+      ${checks.length?`<div class="tcrow"><span>Checked</span><b>${checks.join('<br>')}</b></div>`:''}
+      <div class="tcrow"><span>Sources</span><b>${guard.citations?guard.citations+' included':'none — verify key facts'}</b></div>
+      <div class="tcrow"><span>Privacy</span><b>${guard.redCount?('hid '+guard.redCount+' detail(s)'):'nothing to hide'}</b></div>
+      ${guard.warnings.length?`<div class="tcwarn">⚠ ${guard.warnings.map(w=>esc(w.text)).join('<br>⚠ ')}</div>`:''}
+      ${drift?`<div class="tcdrift">↔ Different model than usual for this — chosen for this one.</div>`:''}
+      <div class="tctips">✨ <b>Get an even better answer</b><br>${tips.map(t=>'• '+esc(t)).join('<br>')}</div>
+    </div></div>`;}
+
+async function doAnswer(text,cls,f,clarify){
+  const preset=PRESETS.find(p=>p.id===activePreset);
+  const stakes=stakesFor(cls,f);
+  const enh=cls==='scam'?{enhanced:text,intent:'check the supplied message'}:enhance(text,cls,f,clarify);
+  const strict=cls==='health'||!!(preset&&preset.strict);
+  const red=redactOn?redact(enh.enhanced,strict):{clean:enh.enhanced,counts:{},total:0};
+  const r=route(cls),temp=tempFor(cls);recordPick(cls,r.chosen.m.id);
+  const ri={cls,chosen:r.chosen,draws:r.draws,temp};lastRoute=ri;
+  renderPanel(ri);
+  // 3.4: only surface the "I refined your request" receipt when it materially changed the ask
+  const materialEnh = !!clarify || (enh.enhanced && enh.enhanced.length > text.length*1.5);
+  const receipt = (cls==='quick'||cls==='search'||cls==='scam'||!materialEnh) ? '' : enhancerReceipt(text,enh.intent);
+  const el=addBot(ri,red.total,receipt),body=el.querySelector('.body');
+  if(cls==='health')HEALTHDOCS[el.id]=text;
+  let answer='';
+  try{
+    if(anyKey()){body.innerHTML='<span class="typing">Bevins is thinking<span class="dot"></span><span class="dot"></span><span class="dot"></span></span>';answer=await callProvider(ri.chosen.m,temp,red.clean,cls);ri.ran=LASTCALL.model;ri.provider=LASTCALL.provider;body.innerHTML=mdToHtml(answer);}
+    else{answer=simulate(cls,ri.chosen.m,temp,enh);body.innerHTML=answer;}
+  }catch(e){body.innerHTML=cls==='scam'?'<b>Check incomplete.</b> Verify through a contact you already trust before sending money or sharing information. If someone may be in immediate danger, contact local emergency services yourself.':`<span style="color:var(--bad)">${esc(friendlyErr(e.message))}</span>`;answer='';}
+  const guard=(SERVERTRUST&&answer)?guardFromServer(SERVERTRUST,cls,red.total):runGuards(answer,cls,stakes,red.total);
+  guard.stakes=guard.stakes||stakes;
+  el.querySelector('.trust').innerHTML=(cls==='scam'||!answer)?'':trustCard(ri,guard,improveTips(cls,f,guard));
+  if(cls==='scam')el.scrollIntoView({block:'start',behavior:'auto'});else feed.scrollTop=feed.scrollHeight;}
+
+function askClarify(text,cls,gap){
+  const id="clar"+(++msgCounter),enc=encodeURIComponent(text);
+  const d=document.createElement('div');d.className='msg bot';d.id=id;
+  d.innerHTML=`<div class="body">${esc(gap.q)}</div><div class="fb">${gap.chips.map(c=>`<button onclick="clarAnswer('${enc}','${cls}','${encodeURIComponent(c)}','${id}')">${esc(c)}</button>`).join('')}<button onclick="clarAnswer('${enc}','${cls}','','${id}')">Just do your best →</button></div>`;
+  feed.appendChild(d);feed.scrollTop=feed.scrollHeight;}
+async function clarAnswer(enc,cls,ansEnc,id){
+  const text=decodeURIComponent(enc),ans=ansEnc?decodeURIComponent(ansEnc):null;
+  const el=document.getElementById(id);if(el){const fb=el.querySelector('.fb');if(fb)fb.remove();el.querySelector('.body').innerHTML+=ans?`<div class="small">You chose: ${esc(ans)}</div>`:`<div class="small">Doing my best…</div>`;}
+  const f=detectFlags(text);await doAnswer(text,cls,f,ans);}
+
+function researchPlan(q){const base=q.replace(/^\s*(please\s+)?(research|compare|find|look into|deep dive on|report on|do a deep dive on)\s+/i,'').trim()||q;
+  return ["Overview & key facts: "+base,"Benefits / the case for: "+base,"Risks, downsides, criticisms: "+base,"Latest 2026 developments: "+base];}
+function pickGatherer(){return (ARMS.quick&&ARMS.quick[0])?ARMS.quick[0].m:ARMS.assistant[0].m;}
+function pickSynth(){return ARMS.assistant[0].m;}
+function renderResearchPanel(subs){document.getElementById('routerBody').innerHTML=
+  `<div class="rcard"><div class="rrow"><span class="k">Mode</span><b>🔬 Research</b></div>
+   <div class="rrow"><span class="k">Sub-questions</span><b>${subs.length}</b></div>
+   <div class="rrow"><span class="k">Gatherers</span><b>${esc(pickGatherer().name)}</b></div>
+   <div class="rrow"><span class="k">Synthesis</span><b>${esc(pickSynth().name)}</b></div></div>
+   <div class="rcard"><div class="small">Cheap models gather in parallel across providers; the best model writes the cited brief — the multi-model engine at work.</div></div>`;}
+async function doResearch(query){
+  const id="bot"+(++msgCounter);const d=document.createElement('div');d.className='msg bot';d.id=id;
+  d.innerHTML=`<div class="meta"><span class="tag cls">🔬 Research</span><span class="tag">team of models</span></div><div class="body">Planning…</div><div class="trust"></div>`;
+  feed.appendChild(d);const body=d.querySelector('.body');
+  if(SERVER){
+    body.innerHTML='<span class="typing">🔬 Researching — searching live sources & cross-checking<span class="dot"></span><span class="dot"></span><span class="dot"></span></span>';
+    try{
+      const r=await fetch('/api/research',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},body:JSON.stringify({query})});
+      const j=await r.json().catch(()=>({}));
+      if(r.status===401){sessionExpired();body.innerHTML='<span style="color:var(--bad)">Please sign in again.</span>';return;}
+      if(!r.ok){body.innerHTML=`<span style="color:var(--bad)">Research failed: ${esc(j.error||'try again')}</span>`;feed.scrollTop=feed.scrollHeight;return;}
+      if(j.provider==='safety'||j.provider==='none'){body.innerHTML=esc(j.content||'Unavailable — add a provider key in Settings.');feed.scrollTop=feed.scrollHeight;return;}
+      if(j.subs)renderResearchPanel(j.subs);
+      const src=(j.sources||[]).map((s,i)=>`&nbsp;&nbsp;[${i+1}] <span class="tag">${esc(s.tier)}</span> <a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title||s.url)}</a>`).join('<br>');
+      const tierLine=j.tiers?` — source quality A:${j.tiers.A} B:${j.tiers.B} C:${j.tiers.C}`:'';
+      body.innerHTML=`<div class="mdh"><b>${esc(query)}</b></div>`+mdToHtml(j.brief)+(src?`<div class="small" style="margin-top:.6rem"><b>Sources${tierLine}</b><br>${src}</div>`:'');
+      const guard=j.trust?guardFromServer(j.trust,'research',0):runGuards(j.brief||'','research','high',0);
+      guard.stakes=guard.stakes||'high';
+      d.querySelector('.trust').innerHTML=trustCard({cls:'research',chosen:{m:pickSynth()},draws:[],temp:0.3},guard,["Ask a follow-up to go deeper on any finding.","Say 'more sources' to widen the search."]);
+    }catch(e){body.innerHTML=`<span style="color:var(--bad)">Research failed: ${esc(e.message)}</span>`;}
+    feed.scrollTop=feed.scrollHeight;return;
+  }
+  const subs=researchPlan(query);renderResearchPanel(subs);
+  body.innerHTML=`<b>Research plan</b> — I broke this into ${subs.length} parts:<br>${subs.map((x,i)=>'&nbsp;&nbsp;'+(i+1)+'. '+esc(x)).join('<br>')}<br><br>Gathering…`;
+  if(anyKey()){
+    const findings=[];
+    for(const q2 of subs){try{const a=await callProvider(pickGatherer(),0.3,"Answer concisely with source URLs: "+q2,'search');findings.push('## '+q2+'\n'+a);}catch(e){findings.push('## '+q2+'\n(gather failed)');}}
+    let brief;try{brief=await callProvider(pickSynth(),0.4,"Write a clear, cited research brief answering: "+query+"\n\nUse these findings (cross-check and note disagreements):\n\n"+findings.join('\n\n')+"\n\nStructure: a 2-sentence summary, key findings as bullets, then a Sources list with URLs.",'assistant');}catch(e){brief='(synthesis failed: '+e.message+')';}
+    body.innerHTML=`<b>${esc(query)}</b>\n\n`+esc(brief);
+    const guard=runGuards(brief,'research','high',0);
+    d.querySelector('.trust').innerHTML=trustCard({cls:'research',chosen:{m:pickSynth()},draws:[],temp:0.4},guard,["Ask a follow-up to go deeper on any finding.","Say 'more sources' to widen the search."]);
+  }else{
+    body.innerHTML=`<b>${esc(query)}</b>\n\n<i>[Preview — add a key in Settings for a live researched brief]</i>\n\nHow I'd research this:\n• Break it into the ${subs.length} sub-questions above\n• Send each to fast, cheap models (Fireworks / Together) in parallel to gather sources\n• Cross-check the findings and flag disagreements\n• Have the best model (${esc(pickSynth().name)}) write a cited brief\n\nPerplexity gives you a paragraph; Bevins gives a cross-checked, cited brief — and shows which models did the work.`;
+    d.querySelector('.trust').innerHTML=trustCard({cls:'research',chosen:{m:pickSynth()},draws:[],temp:0.4},{confidence:0.6,word:'fair',verification:'none',verified:false,citations:0,warnings:[],redCount:0,stakes:'high'},["Add a provider key to run the live research.","Say what decision this is for and I'll focus it."]);
+  }
+  feed.scrollTop=feed.scrollHeight;}
+
+// ---------------- send ----------------
+// ---- attachments (Phase 4.1/4.3: document & photo upload → summarize/explain) ----
+let ATTACH=null, IMG=null;   // ATTACH = {name, kind:'text'|'image', text?|dataurl?}
+if(window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+async function extractPdf(file){const buf=await file.arrayBuffer();const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+  let t='';const n=Math.min(pdf.numPages,30);for(let i=1;i<=n;i++){const pg=await pdf.getPage(i);const c=await pg.getTextContent();t+=c.items.map(x=>x.str).join(' ')+'\n';}return t.trim();}
+function readText(file){return new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.readAsText(file);});}
+function readDataURL(file){return new Promise((resolve,reject)=>{const fr=new FileReader();fr.onload=()=>resolve(fr.result);fr.onerror=fr.onabort=()=>reject(new Error('Image could not be read'));fr.readAsDataURL(file);});}
+async function handleFile(file){if(!file)return;
+  if(file.size>15*1024*1024){renderAttach(file.name,'too large (max 15 MB)');ATTACH=null;return;}
+  try{
+    if(file.type.startsWith('image/')){ATTACH={name:file.name,kind:'image',file};}
+    else if(file.name.toLowerCase().endsWith('.pdf')){renderAttach(file.name,'reading…');const txt=await extractPdf(file);ATTACH={name:file.name,kind:'text',text:txt.slice(0,45000)};}
+    else{const txt=await readText(file);ATTACH={name:file.name,kind:'text',text:String(txt).slice(0,45000)};}
+    renderAttach(ATTACH.name, ATTACH.kind==='image'?'photo':(ATTACH.text.length+' characters'));
+    if(!input.value.trim())input.placeholder=ATTACH.kind==='image'?'Ask about this photo… (or just send)':'Ask about this document… (or just send to summarize)';
+  }catch(e){renderAttach(file.name,'could not read this file');ATTACH=null;}}
+function renderAttach(name,meta){document.getElementById('attachChip').innerHTML=name?`<span class="attpill">📎 ${esc(name)} <span style="color:var(--dim)">· ${esc(meta)}</span> <button onclick="clearAttach()" aria-label="Remove attachment">✕</button></span>`:'';}
+function clearAttach(){ATTACH=null;renderAttach('','');input.placeholder='Ask anything… or attach a document / photo';}
+// ---- C2PA / Content Credentials image provenance (Phase 4.4 scam checker) ----
+function addBotRaw(html){const d=document.createElement('div');d.className='msg bot';d.innerHTML=html;const es=document.getElementById('emptyState');if(es)es.style.display='none';feed.appendChild(d);feed.scrollTop=feed.scrollHeight;return d;}
+
+// Image origin is local provenance only; it is never a scam/image truth verdict.
+let ORIGIN_CHECK=null,ORIGIN_GENERATION=0;
+function cancelOriginCheck(){if(ORIGIN_CHECK)ORIGIN_CHECK.abort();}
+function originText(tag,value,cls){const node=document.createElement(tag);node.textContent=value;if(cls)node.className=cls;return node;}
+function imageMessageAction(caption){
+  IMG=null;clearAttach();
+  if(PENDING_SCAM){
+    input.placeholder="Paste the optional sender's email or phone number…";
+    input.focus();return;
+  }
+  setPreset('scam');input.value=caption||'';
+  input.placeholder='Paste the actual message or email text here, then press Send';
+  input.dispatchEvent(new Event('input'));input.focus();
+}
+async function c2paCheck(file,caption=''){
+  cancelOriginCheck();
+  const generation=++ORIGIN_GENERATION;
+  const control=new AbortController();ORIGIN_CHECK=control;
+  const card=addBotRaw('<div class="meta"><span class="tag cls">Image origin only</span></div><div class="body origin-body" role="status" aria-live="polite"></div>');
+  const body=card.querySelector('.body');
+  const cancel=originText('button','Cancel origin check');cancel.type='button';cancel.onclick=()=>control.abort();
+  body.append(originText('p','Checking the original file on this device…'),cancel);
+  card.scrollIntoView({block:'start',behavior:'auto'});
+  let timer,api,cancelListener,expired=false;
+  let result={status:'unavailable',manifest_present:null,signature_verified:false,binding_verified:null,signer_trusted:null,ai_status:'unknown',reason:'reader_unavailable'};
+  try {
+    const timedOut=new Promise((_,reject)=>{timer=setTimeout(()=>{expired=true;control.abort();reject(new Error('unavailable'));},12500);});
+    const cancelled=new Promise(resolve=>{cancelListener=()=>resolve({...result,reason:'cancelled'});control.signal.addEventListener('abort',cancelListener,{once:true});});
+    const work=(async()=>{
+      api=await import('/image-origin/v1/origin-client.mjs');
+      if(control.signal.aborted)return {...result,reason:'cancelled'};
+      return await api.checkOrigin(file,{signal:control.signal});
+    })();
+    result=await Promise.race([work,timedOut,cancelled]);
+    if(expired)result={...result,reason:'timeout'};
+  } catch (_) {
+    result={...result,reason:expired?'timeout':control.signal.aborted?'cancelled':'reader_unavailable'};
+  } finally {
+    clearTimeout(timer);
+    control.signal.removeEventListener('abort',cancelListener);
+    control.abort();if(ORIGIN_CHECK===control)ORIGIN_CHECK=null;
+  }
+  if(!card.isConnected)return result;
+  const fallback={heading:'Image origin check unavailable',body:'The check could not finish. Whether an origin record is present is unknown.'};
+  let copy=api?.ORIGIN_COPY[result.status]||fallback;
+  if(result.reason==='cancelled')copy={heading:'Image origin check cancelled',body:'The check did not finish. Whether an origin record is present is unknown.'};
+  if(result.reason==='unsupported_format')copy={heading:'This image format could not be checked',body:'Use an original JPEG or PNG if you have it, or paste the message text separately. Converting an image or taking a screenshot can remove its origin record.'};
+  if(result.reason==='oversize')copy={heading:'This image is too large for this check',body:'This check accepts files up to 15 MB. Whether an origin record is present is unknown. You can paste the message text separately.'};
+  const limit=api?.ORIGIN_LIMIT||'This does not confirm that the picture is true, who sent it, that a request is safe, or whether an emergency is real. AI generation is not determined by this check.';
+  const action=api?.ORIGIN_ACTION||'For an urgent request, pause before sending money or codes. Call the person using a number you already know, or contact another trusted family member. If someone may be in immediate danger, contact local emergency services yourself.';
+  const actionBox=document.createElement('div');actionBox.className='origin-action';
+  actionBox.append(originText('strong','What to do first'),originText('p',action));
+  body.replaceChildren(originText('p','Image origin only — message text not checked.','origin-scope'),originText('h3',copy.heading),actionBox,originText('p',limit,'origin-limit'),originText('p',copy.body));
+  body.append(originText('p','Text in the picture and any question typed with it were not checked for scam warning signs. Paste the actual message or email text for a separate check.'));
+  const next=originText('button',PENDING_SCAM?'Continue earlier message check':'Check message text');next.type='button';next.onclick=()=>imageMessageAction(caption);
+  body.append(next);
+  if(PENDING_SCAM){
+    body.append(originText('p','Your earlier message is still waiting for optional sender details. The image has not changed that message.'));
+    const skip=originText('button',"I don't have the sender");skip.type='button';skip.onclick=skipScamSender;body.append(skip);
+  }
+  card.dataset.originStatus=result.status;card.dataset.originReason=result.reason||'';
+  if(generation===ORIGIN_GENERATION)card.scrollIntoView({block:'start',behavior:'auto'});
+  return result;
+}
+
+
+// scam mode: the sender (from-email or phone) is the biggest clue — collect it if it's missing
+let PENDING_SCAM=null;
+function hasSender(t){return /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/.test(t) || /(?:\+?\d[\s().-]?){7,}/.test(t);}
+function askScamSender(pending){PENDING_SCAM=pending;
+  const d=document.createElement('div');d.className='msg bot';
+  d.innerHTML=`<div class="meta"><span class="tag cls">🕵️ Scam check</span></div><div class="body">One quick thing — <b>who was this from?</b> Paste the sender's <b>email address or phone number</b> below and press Send. This optional context can help, but a displayed address or number does not confirm who sent it.</div><div class="fb"><button onclick="skipScamSender()">I don't have the sender</button></div>`;
+  const es=document.getElementById('emptyState');if(es)es.style.display='none';feed.appendChild(d);feed.scrollTop=feed.scrollHeight;
+  input.placeholder="Paste the sender's email or phone number…";input.focus();}
+function runScam(pending,sender){const combined='SENDER (from-address / phone number): '+(sender||'(not provided)')+'\n\nMESSAGE:\n'+pending;
+  doAnswer(combined,'scam',detectFlags(combined),null);}
+function skipScamSender(){if(typeof PENDING_SCAM!=='string'||!PENDING_SCAM.trim())return;const p=PENDING_SCAM;PENDING_SCAM=null;input.placeholder='Ask anything… or attach a document / photo';addUser('(sender not available)');runScam(p,'');}
+
+async function send(){
+  const raw=input.value.trim();if(!raw && !ATTACH)return;
+  const preset0=PRESETS.find(p=>p.id===activePreset);
+  const scamImage=!!(ATTACH&&ATTACH.kind==='image'&&((preset0&&preset0.cls==='scam')||PENDING_SCAM||(activePreset==='auto'&&classify(raw).cls==='scam')));
+  // if we're waiting for the sender of a pasted scam message, this message IS the sender
+  if(PENDING_SCAM&&!scamImage){const p=PENDING_SCAM;PENDING_SCAM=null;input.value='';input.style.height='auto';input.placeholder='Ask anything… or attach a document / photo';addUser(raw);runScam(p,raw);return;}
+  const att=ATTACH;ATTACH=null;renderAttach('','');
+  const scamMode = !!(preset0 && preset0.cls==='scam') || scamImage;
+  let text=raw;IMG=null;
+  if(att){
+    if(att.kind==='text'){text=(raw||(scamMode?'Is this a scam? Check it hard and give a verdict.':'Read this and summarize it in plain language, and flag anything important.'))+'\n\n--- ATTACHED '+(scamMode?'MESSAGE':'DOCUMENT')+': '+att.name+' ---\n'+att.text;}
+    else if(att.kind==='image'){text=raw||(scamMode?'Is this message / image a scam? Check it hard and give a verdict.':'What is in this photo? Describe it and anything notable.');}
+  }
+  input.value='';input.style.height='auto';input.placeholder='Ask anything… or attach a document / photo';sendBtn.disabled=true;
+  addUser(raw||('📎 '+(att?att.name:'attachment')));
+  try{
+    if(detectFlags(text).red_flag){ showEmergency(); return; }
+    // attachment → answer. In scam mode, images get a C2PA provenance check first, then a scam verdict.
+    if(att){
+      // for a pasted/attached scam MESSAGE (not a photo), collect the sender first if it isn't there
+      if(scamMode && att.kind==='text' && !hasSender(text)){ askScamSender(text); return; }
+      if(att.kind==='image' && scamMode){await c2paCheck(att.file,raw);return;}
+      if(att.kind==='image')IMG=await readDataURL(att.file);
+      const cls = scamMode ? 'scam' : (att.kind==='image'?'assistant':'longdoc');
+      await doAnswer(text,cls,detectFlags(text),null); return;
+    }
+    const preset=preset0;
+    if((preset&&preset.research) || (!(preset&&preset.cls)&&classify(text).research)){ await doResearch(text); return; }
+    let cls,gen=null;
+    if(preset&&preset.cls) cls=preset.cls;
+    else{const c=classify(text); if(c.research){await doResearch(text);return;} if(c.gen)gen=c.gen; else cls=c.cls;}
+    // scam mode on pasted text: the sender is the biggest clue — ask for it if missing
+    if(cls==='scam' && !IMG && !hasSender(text)){ askScamSender(text); return; }
+    if(gen){const red=redactOn?redact(text,false):{clean:text}; handleGen(gen,red.clean); return;}
+    const f=detectFlags(text);
+    const gap=gapFor(cls,text,f);
+    if(gap){ askClarify(text,cls,gap); return; }
+    await doAnswer(text,cls,f,null);
+  } finally { sendBtn.disabled=false; input.focus(); IMG=null; }
+}
+function simulate(cls,m,temp,enh){const cfg=CLASSES[cls]||{};
+  let s=`<i>[Preview — add a key (OpenRouter or Fireworks) in Settings for a real answer]</i>\n\n`;
+  s+=`I'd send an <b>expert-written prompt</b> to <b>${esc(m.name)}</b> (${esc(m.creator||'')}) at temperature <b>${temp}</b> — read as <b>${(cfg.label||cls).toLowerCase()}</b>. Live, you'd get the answer plus <b>sources</b> and a <b>confidence score</b>.`;
+  if(cfg.health)s+=`\n\n⚠️ <b>Health = information only, not medical advice.</b> Routed only to HIPAA-capable providers, low temperature, redacted, savable to your private on-device history.`;
+  return s;}
+// ---- Answer generation goes through the server (/api/chat); no keys or provider calls live in the browser ----
+async function callProvider(m,temperature,text,cls){
+  // Always via the server: it holds the keys, does per-class routing, health-provider pinning, redaction,
+  // multimodal, and the safety guards. (The old browser-direct BYOK path was removed — it was unreachable in
+  // production and carried latent health-privacy / image / prompt bugs.)
+  SERVERTRUST=null;
+  let pl={job_class:cls,temperature};
+  if(m&&m.id) pl.model=m.id;              // route to the EXACT model the bandit picked (server validates it)
+  if(IMG){pl.messages=[{role:'user',content:[{type:'text',text:text||'Describe this image.'},{type:'image_url',image_url:{url:IMG}}]}];}
+  else pl.message=text;
+  const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},body:JSON.stringify(pl)});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok){if(r.status===401){sessionExpired();throw new Error('Please sign in again.');}throw new Error(j.error||'chat failed');}
+  SERVERTRUST=j.trust||null;
+  // capture the model that ACTUALLY answered (server may fall through to a different model than the pick);
+  // used to label the panel honestly and to attribute 👍/👎 to the real model, not the requested one.
+  LASTCALL={provider:(j.provider||null), model:(j.model||null)};
+  return (j.content||'');           // provenance moved into the collapsible trust details (not the answer body)
+}
+let LASTCALL={provider:null,model:null};
+
+// ---------------- settings / keys ----------------
+function openSettings(){document.getElementById('settingsModal').classList.add('open');
+  keyOR.value=KEYS.or||'';keyFW.value=KEYS.fw||'';keyTG.value=KEYS.tg||'';phrRenderState();}
+function saveKeys(){KEYS.or=keyOR.value.trim()||null;KEYS.fw=keyFW.value.trim()||null;KEYS.tg=keyTG.value.trim()||null;
+  if(SERVER){fetch('/api/keys',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},body:JSON.stringify({or:KEYS.or,fw:KEYS.fw,tg:KEYS.tg})}).then(r=>{if(r.ok)loadModels();}).catch(()=>{});}else persistKeys();
+  updateMode();closeModal('settingsModal');}
+function clearKeys(){KEYS.or=KEYS.fw=KEYS.tg=null;keyOR.value=keyFW.value=keyTG.value='';updateMode();}
+function updateMode(){const m=document.getElementById('mode');if(SERVER){m.textContent='Live';m.className='pill live';return;}const n=[KEYS.or&&'OR',KEYS.fw&&'FW',KEYS.tg&&'TG'].filter(Boolean);
+  m.textContent=n.length?'Live':'Preview';m.className='pill'+(n.length?' live':'');}
+// text-size control (persists) — key accessibility feature for a 60+ reader
+function setFont(dir){let s=17;try{s=parseFloat(localStorage.getItem('bevinsFont')||'17');}catch(e){}
+  s=Math.max(15,Math.min(23,s+dir));document.documentElement.style.fontSize=s+'px';try{localStorage.setItem('bevinsFont',s);}catch(e){}}
+(function(){try{const s=localStorage.getItem('bevinsFont');if(s)document.documentElement.style.fontSize=s+'px';}catch(e){}})();
+// clickable example chips — lower the barrier to the first message
+function exFill(t){const i=document.getElementById('input');i.value=t;i.style.height='auto';i.style.height=Math.min(i.scrollHeight,130)+'px';i.focus();}
+// light/dark theme (opt-in, persists, honors OS preference on first load)
+function setTheme(t){const light=t==='light';document.body.classList.toggle('light',light);
+  const b=document.getElementById('themeBtn');if(b)b.textContent=light?'🌙':'☀️';try{localStorage.setItem('bevinsTheme',t);}catch(e){}}
+function toggleTheme(){setTheme(document.body.classList.contains('light')?'dark':'light');}
+(function(){try{let t=localStorage.getItem('bevinsTheme');if(!t&&window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches)t='light';setTheme(t==='light'?'light':'dark');}catch(e){}})();
+// start a fresh conversation (snapshots the current one to on-device history first)
+function newChat(){cancelOriginCheck();snapshotConv();PENDING_SCAM=null;clearAttach();IMG=null;const f=document.getElementById('feed');[...f.querySelectorAll('.msg,.shieldline')].forEach(m=>m.remove());
+  const es=document.getElementById('emptyState');if(es)es.style.display='';lastRoute=null;
+  const rb=document.getElementById('routerBody');if(rb)rb.innerHTML='<div class="rcard"><div class="small">The router shows its thinking here after your first message.</div></div>';
+  const i=document.getElementById('input');if(i){i.value='';i.focus();}}
+// on-device conversation history (localStorage only — respects the no-server-chat-storage design)
+function snapshotConv(){try{
+  const msgs=[...document.getElementById('feed').querySelectorAll('.msg')];if(!msgs.length)return;
+  let lines=[],title='';
+  msgs.forEach(m=>{const isUser=m.classList.contains('user');const b=m.querySelector('.body');
+    const t=(isUser?m.textContent:(b?b.innerText:'')).trim();if(!t)return;
+    if(isUser&&!title)title=t.slice(0,60);lines.push((isUser?'You: ':'Bevins: ')+t);});
+  if(!lines.length)return;
+  let hist=JSON.parse(localStorage.getItem('bevinsHistory')||'[]');
+  hist.unshift({title:title||'Conversation',ts:Date.now(),text:lines.join('\n\n')});
+  localStorage.setItem('bevinsHistory',JSON.stringify(hist.slice(0,20)));
+}catch(e){}}
+function openHistory(){let hist=[];try{hist=JSON.parse(localStorage.getItem('bevinsHistory')||'[]');}catch(e){}
+  const el=document.getElementById('historyList');
+  if(!hist.length){el.innerHTML='<div class="small" style="margin-top:.8rem">No saved conversations yet. Start chatting, then tap “✚ New chat” to save the current one here.</div>';}
+  else{el.innerHTML=hist.map((h,i)=>`<div style="margin-top:.5rem"><button class="hbtn" style="width:100%;text-align:left;justify-content:flex-start;min-height:48px" onclick="showHist(${i})"><b>${esc(h.title)}</b>&nbsp;<span class="small">· ${new Date(h.ts).toLocaleString()}</span></button></div>`).join('')
+    +`<button class="hbtn" style="margin-top:.8rem" onclick="clearHist()">Clear all history</button>`;}
+  document.getElementById('historyModal').classList.add('open');}
+function showHist(i){let hist=[];try{hist=JSON.parse(localStorage.getItem('bevinsHistory')||'[]');}catch(e){}const h=hist[i];if(!h)return;
+  document.getElementById('historyList').innerHTML=`<button class="hbtn" onclick="openHistory()">← Back</button><h3 style="margin:.6rem 0 .1rem">${esc(h.title)}</h3><div class="small">${new Date(h.ts).toLocaleString()}</div><div style="white-space:pre-wrap;margin-top:.7rem;line-height:1.55">${esc(h.text)}</div>`;}
+function clearHist(){try{localStorage.removeItem('bevinsHistory');}catch(e){}openHistory();}
+// password show/hide — reduces sign-in friction for a non-technical user
+function togglePw(){const i=document.getElementById('authPass'),b=document.getElementById('pwToggle');if(!i)return;
+  const show=i.type==='password';i.type=show?'text':'password';b.textContent=show?'Hide':'Show';b.setAttribute('aria-label',show?'Hide password':'Show password');}
+// iOS "Add to Home Screen" nudge (iOS Safari never fires beforeinstallprompt)
+function dismissIos(){const n=document.getElementById('iosNudge');if(n)n.classList.remove('show');try{localStorage.setItem('bevinsIosNudge','1');}catch(e){}}
+(function(){try{const ua=navigator.userAgent.toLowerCase();const isIos=/iphone|ipad|ipod/.test(ua);const standalone=('standalone'in navigator)&&navigator.standalone;
+  if(isIos&&!standalone&&!localStorage.getItem('bevinsIosNudge')){const n=document.getElementById('iosNudge');if(n)n.classList.add('show');}}catch(e){}})();
+// password strength hint on signup (3.10)
+function pwStrength(){const el=document.getElementById('pwHint');if(!el)return;const v=(document.getElementById('authPass')||{}).value||'';
+  if(authMode!=='signup'||!v){el.textContent='';return;}
+  let s=0;if(v.length>=8)s++;if(v.length>=12)s++;if(/[A-Z]/.test(v)&&/[a-z]/.test(v))s++;if(/\d/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;
+  const label=v.length<8?'Too short (8+ needed)':s<=2?'Weak':s<=3?'Okay':s<=4?'Strong':'Very strong';
+  const col=v.length<8?'var(--bad)':s<=2?'var(--warn)':'var(--good)';
+  el.textContent='Password strength: '+label;el.style.color=col;}
+// copy an answer to the clipboard (critical for the email/writing use-case)
+function copyMsg(id,btn){const el=document.getElementById(id);if(!el)return;const b=el.querySelector('.body');const t=(b?b.innerText:'').trim();
+  const done=()=>{const o=btn.textContent;btn.textContent='✓ Copied';setTimeout(()=>btn.textContent=o,1500);};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done).catch(()=>{});}
+  else{const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done();}catch(e){}ta.remove();}}
+
+// ---------------- matrix modal ----------------
+let matrixTab='llm';
+function showTab(t){matrixTab=t;document.getElementById('tabLLM').classList.toggle('active',t==='llm');
+  document.getElementById('tabGen').classList.toggle('active',t==='gen');renderMatrix();}
+function costBand(p){if(p==null||p==='')return '\u2014';if(p<1)return 'lower';if(p<10)return 'mid';return 'higher';}
+function renderMatrix(){
+  const wrap=document.getElementById('matrixTableWrap');
+  if(matrixTab==='llm'){
+    let r=`<tr><th>Model</th><th>Maker</th><th>Tier</th><th>Data</th><th>Cost band</th><th>ELO</th><th>SWE</th><th>Best for</th></tr>`;
+    LLMS.slice().sort((a,b)=>(b.elo||0)-(a.elo||0)).forEach(m=>{
+      r+=`<tr><td><b>${esc(m.name)}</b></td><td>${esc(m.creator||'')}</td><td>${esc(m.tierClass||'')}</td>
+        <td>${esc(TIERLABEL[m.provTier]||m.provTier||'')}</td><td>${costBand(m.outM)}</td>
+        <td>${m.elo||'—'}</td><td>${m.swe||'—'}</td><td style="max-width:320px">${esc((m.bestfor||m.standout||'').replace(/^Best for:\s*/i,'').split('. E.g')[0])}</td></tr>`;});
+    wrap.innerHTML='<table>'+r+'</table>';
+  } else {
+    let r=`<tr><th>Model</th><th>Type</th><th>Maker</th><th>Quality</th><th>Price</th><th>Standout</th></tr>`;
+    GENAI.slice().forEach(g=>{r+=`<tr><td><b>${esc(g.name)}</b></td><td>${esc(g.modality)}</td><td>${esc(g.creator||'')}</td>
+      <td>${esc(g.quality||'')}</td><td style="max-width:150px">${esc(g.price||'')}</td><td style="max-width:280px">${esc(g.standout||'')}</td></tr>`;});
+    wrap.innerHTML='<table>'+r+'</table>';
+  }
+}
+// ---------------- Guide / What's New / FAQ ----------------
+const GUIDE_HTML={
+guide:`<div class="small" style="font-size:.85rem;line-height:1.6;color:var(--text)">
+<b>What Bevins is.</b> A plain-language check for suspicious messages and images, plus an assistant that picks a model, writes a clearer prompt, and shows how much to trust the answer. Personal details can be hidden before a prompt is sent.<br><br>
+<b>Just type.</b> Leave it on <b>✨ Auto</b> and ask normally. Or tap a mode: <b>🔬 Research</b> (several models, then a cited brief), <b>🔎 Look it up</b> (current facts), <b>✍️ Write an email</b>, <b>🕵️ Is this real?</b> (scam check), <b>🩺 Health &amp; medical</b> (plain-English information, not medical advice).<br><br>
+<b>The trust card</b> under each answer shows the model, a confidence score, sources, what was hidden for privacy, and tips to get a better answer. Tap <i>details</i> to open it.<br><br>
+<b>Your keys &amp; privacy.</b> Add a provider key in <b>Settings</b>. On a server it is stored encrypted, not in the browser. Health notes stay on this device and you can delete them.<br><br>
+<b>Accounts.</b> The first account uses a setup code from the operator. Later accounts can require an invite code. Each account is separate: chats, keys, and health history are not shared.</div>`,
+new:`<div class="small" style="font-size:.85rem;line-height:1.7;color:var(--text)">
+<b>Early public release</b><br>
+• Paste a message, forward an email, or check an image's Content Credentials.<br>
+• Link checks can use Google Safe Browsing, VirusTotal, and public threat feeds when those keys are configured.<br>
+• Optional forwarding mailbox for suspicious email.<br>
+• Model router, Research mode, prompt co-pilot, and a trust card.<br>
+• First account uses a setup code; later accounts can require an invite.<br>
+• Provider keys are encrypted on the server. Health notes stay on this device.<br>
+• Crisis messages point to 911/988.</div>`,
+faq:`<div class="small" style="font-size:.85rem;line-height:1.7;color:var(--text)">
+<b>Who is this for?</b> Anyone who wants a plain-language second look at a suspicious email, text, or a transcript of a call or voicemail, and at images that may have been edited.<br><br>
+<b>Is signup open?</b> The software is public. Each installation chooses its own access. The first account uses a setup code, and later accounts can require an invite.<br><br>
+<b>Do you use my data to train AI?</b> Prompts are sent to the providers that installation configured, to answer you. Check those providers' terms before you paste anything sensitive.<br><br>
+<b>Is health information medical advice?</b> No. Bevins gives general information only, not a diagnosis or treatment. Check with a professional. In an emergency call 911 or 988.<br><br>
+<b>What if I forget my password?</b> This build does not email a reset link. The person who runs your installation can help, or you can create a new account if that installation allows it.<br><br>
+<b>How do I delete my data?</b> Health history can be deleted in Settings. Ask the operator how account deletion works on that installation.</div>`};
+function guideTab(t){['guide','new','faq'].forEach(k=>document.getElementById('gTab'+k[0].toUpperCase()+k.slice(1)).classList.toggle('active',k===t));
+  document.getElementById('guideBody').innerHTML=GUIDE_HTML[t];}
+function openGuide(){guideTab('guide');document.getElementById('guideModal').classList.add('open');}
+function openMatrix(){document.getElementById('matrixMeta').textContent=
+  `${LLMS.length} text · ${GENAI.length} generative · illustrative roster ${(DATA.snapshot_date||'').slice(0,10)} · cost bands are not current prices`;
+  renderMatrix();document.getElementById('matrixModal').classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+// ---------------- Health history: client-side encrypted (PBKDF2 + AES-GCM, IndexedDB) ----------------
+const HEALTHDOCS={};
+let phr={key:null,records:[],unlocked:false,salt:null};
+const IDB_OK=('indexedDB' in window)&&!!(window.crypto&&crypto.subtle);
+function idb(){return new Promise((res,rej)=>{const r=indexedDB.open('bevins-health',1);
+  r.onupgradeneeded=()=>r.result.createObjectStore('v');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});}
+async function idbGet(k){const db=await idb();return new Promise(res=>{const t=db.transaction('v').objectStore('v').get(k);t.onsuccess=()=>res(t.result);t.onerror=()=>res(null);});}
+async function idbPut(k,v){const db=await idb();return new Promise(res=>{const t=db.transaction('v','readwrite').objectStore('v').put(v,k);t.onsuccess=()=>res(1);t.onerror=()=>res(0);});}
+async function idbClear(){const db=await idb();return new Promise(res=>{const t=db.transaction('v','readwrite').objectStore('v').clear();t.onsuccess=()=>res(1);t.onerror=()=>res(0);});}
+async function deriveKey(pass,salt){const km=await crypto.subtle.importKey('raw',new TextEncoder().encode(pass),'PBKDF2',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:600000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);}
+async function phrPersist(){if(!IDB_OK||!phr.key)return;
+  const iv=crypto.getRandomValues(new Uint8Array(12));
+  const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},phr.key,new TextEncoder().encode(JSON.stringify(phr.records)));
+  await idbPut(vaultKey(),{salt:phr.salt,iv:Array.from(iv),ct:Array.from(new Uint8Array(ct))});}
+async function phrUnlock(){
+  const pass=document.getElementById('phrPass').value;if(!pass){alert('Enter a passphrase.');return;}
+  if(!IDB_OK){phr.unlocked=true;phrRenderState();alert('Note: this view has no secure storage, so saving works only when the app is served/installed. Everything else works.');return;}
+  const ex=await idbGet(vaultKey());
+  try{
+    if(ex){const salt=new Uint8Array(ex.salt),key=await deriveKey(pass,salt);
+      const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:new Uint8Array(ex.iv)},key,new Uint8Array(ex.ct));
+      phr.records=JSON.parse(new TextDecoder().decode(pt));phr.key=key;phr.salt=Array.from(salt);phr.unlocked=true;}
+    else{const salt=crypto.getRandomValues(new Uint8Array(16));phr.key=await deriveKey(pass,salt);phr.salt=Array.from(salt);phr.records=[];phr.unlocked=true;await phrPersist();}
+    document.getElementById('phrPass').value='';phrRenderState();
+  }catch(e){alert('Wrong passphrase, or the stored data could not be read.');}
+}
+function phrLock(){phr={key:null,records:[],unlocked:false,salt:null};phrRenderState();}
+function phrRenderState(){const el=document.getElementById('phrState');if(!el)return;
+  el.textContent=phr.unlocked?`Unlocked · ${phr.records.length} saved result(s) on this device.`:'Locked. Set a passphrase to save lab results on this device (encrypted — we can’t see or recover it).';}
+async function idbDel(k){const db=await idb();return new Promise(res=>{const t=db.transaction('v','readwrite').objectStore('v').delete(k);t.onsuccess=()=>res(1);t.onerror=()=>res(0);});}
+async function phrDeleteAll(){if(!confirm('Delete ALL saved health history for this account? This cannot be undone.'))return;
+  if(IDB_OK)await idbDel(vaultKey());phr.records=[];phrRenderState();renderTimeline();}
+function parseLabs(text){const labs=[];const re=/([A-Za-z][A-Za-z0-9 ()\-\/]{1,28}?)[:\s]\s*(\d+(?:\.\d+)?)\s*(mg\/dL|mmol\/L|ng\/mL|pg\/mL|IU\/L|U\/L|g\/dL|mEq\/L|mL\/min|%)/g;
+  let m;while((m=re.exec(text)))labs.push({test:m[1].trim(),value:m[2],unit:m[3]});return labs.slice(0,40);}
+function phrSaveMsg(id){
+  if(!phr.unlocked){alert('Set a health passphrase in Settings → Health history first (it’s private to this device).');openSettings();return;}
+  const raw=HEALTHDOCS[id]||'';const labs=parseLabs(raw);
+  phr.records.unshift({ts:new Date().toISOString().slice(0,10),title:labs.length?'Lab results':'Health note',labs,raw});
+  phrPersist();phrRenderState();
+  const c=document.querySelector('#'+id+' .savecard');if(c)c.innerHTML='✓ Saved to your private health history · <a style="color:var(--accent);cursor:pointer" onclick="openTimeline()">view timeline</a>';
+}
+function openTimeline(){renderTimeline();document.getElementById('timelineModal').classList.add('open');}
+function renderTimeline(){const b=document.getElementById('timelineBody');if(!b)return;
+  if(!phr.unlocked){b.innerHTML='<div class="empty">Unlock health history in Settings first.</div>';return;}
+  if(!phr.records.length){b.innerHTML='<div class="empty">Nothing saved yet.</div>';return;}
+  b.innerHTML=phr.records.map((r,i)=>`<div class="rcard"><div class="rrow"><b>${r.ts} — ${esc(r.title)}</b><button class="hbtn" style="border-color:#a33;color:#ffb3b3" onclick="phrDel(${i})">Delete</button></div>${r.labs.length?r.labs.map(l=>`<div class="small">${esc(l.test)}: <b>${esc(l.value)} ${esc(l.unit)}</b></div>`).join(''):'<div class="small">'+esc((r.raw||'').slice(0,140))+'…</div>'}</div>`).join('');}
+function phrDel(i){phr.records.splice(i,1);phrPersist();renderTimeline();phrRenderState();}
+function phrExport(){if(!phr.records.length){alert('Nothing to export yet.');return;}
+  let md='# My Health History (Bevins)\n\n_Informational only — not medical advice._\n\n';
+  for(const r of phr.records){md+=`## ${r.ts} — ${r.title}\n`;for(const l of r.labs)md+=`- ${l.test}: ${l.value} ${l.unit}\n`;md+='\n';}
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([md],{type:'text/markdown'}));a.download='my-health-history.md';a.click();}
+
+// ---------------- presets bar ----------------
+function renderPresets(){
+  const el=document.getElementById('presets');
+  el.innerHTML = PRESETS.map(p=>`<button class="chip ${p.id===activePreset?'active':''}" onclick="setPreset('${p.id}')">${p.emoji} ${p.label}</button>`).join('')
+    + `<button class="chip shieldtog ${redactOn?'on':''}" onclick="toggleRedact()">🛡 Auto-redact: ${redactOn?'ON':'OFF'}</button>`;
+}
+function setPreset(id){activePreset=id;
+  const p=PRESETS.find(x=>x.id===id);
+  input.placeholder = id==="meddoc" ? "Paste the medical document or lab report — sensitive details get scrubbed automatically…"
+    : id==="email" ? "Describe the email you want written…"
+    : id==="search" ? "What do you want to look up?…" : "Ask anything…";
+  if(p&&p.strict&&!redactOn){redactOn=true;} // medical-doc forces redaction on
+  renderPresets();input.focus();
+}
+function toggleRedact(){redactOn=!redactOn;renderPresets();}
+renderPresets();
+
+// ================= ACCOUNTS · LOGIN · SSO · INVITES (per-user isolation) =================
+let CURRENT_USER=null, authMode='signin';
+let SERVER=false, TOKEN=null;
+function accDB(){return new Promise((res,rej)=>{const r=indexedDB.open('bevins-accounts',1);
+  r.onupgradeneeded=()=>{r.result.createObjectStore('acc');r.result.createObjectStore('meta');};
+  r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});}
+async function accGet(email){const db=await accDB();return new Promise(res=>{const t=db.transaction('acc').objectStore('acc').get(email);t.onsuccess=()=>res(t.result);t.onerror=()=>res(null);});}
+async function accPut(email,v){const db=await accDB();return new Promise(res=>{const t=db.transaction('acc','readwrite').objectStore('acc').put(v,email);t.onsuccess=()=>res(1);t.onerror=()=>res(0);});}
+async function accKeys(){const db=await accDB();return new Promise(res=>{const t=db.transaction('acc').objectStore('acc').getAllKeys();t.onsuccess=()=>res(t.result||[]);t.onerror=()=>res([]);});}
+async function metaGet(k){const db=await accDB();return new Promise(res=>{const t=db.transaction('meta').objectStore('meta').get(k);t.onsuccess=()=>res(t.result);t.onerror=()=>res(null);});}
+async function metaPut(k,v){const db=await accDB();return new Promise(res=>{const t=db.transaction('meta','readwrite').objectStore('meta').put(v,k);t.onsuccess=()=>res(1);t.onerror=()=>res(0);});}
+async function pbkdf2bits(pw,salt){const km=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveBits']);
+  const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt,iterations:210000,hash:'SHA-256'},km,256);return Array.from(new Uint8Array(bits));}
+function ctEq(a,b){if(!a||!b||a.length!==b.length)return false;let d=0;for(let i=0;i<a.length;i++)d|=a[i]^b[i];return d===0;}
+function authMsg(m){const e=document.getElementById('authMsg');if(e)e.textContent=m||'';}
+function authTab(m){authMode=m;
+  document.getElementById('tabSignin').classList.toggle('active',m==='signin');
+  document.getElementById('tabSignup').classList.toggle('active',m==='signup');
+  document.getElementById('authGo').textContent=m==='signin'?'Sign in':'Create account';
+  document.getElementById('authInvite').style.display=m==='signup'?'block':'none';document.getElementById('authSetup').style.display=m==='signup'?'block':'none';document.getElementById('agreeRow').style.display=m==='signup'?'block':'none';
+  document.getElementById('authPass').setAttribute('autocomplete',m==='signup'?'new-password':'current-password');pwStrength();authMsg('');}
+async function inviteList(){return (await metaGet('invites'))||{};}
+async function authServer(email,pw){
+  if(authMode==='signup'){ if(pw.length<8){authMsg('Password must be 8+ characters.');return;} if(!document.getElementById('authAgree').checked){authMsg('Please accept the terms to continue.');return;} }
+  const path=authMode==='signup'?'/api/signup':'/api/login';
+  const payload={email,password:pw};
+  if(authMode==='signup'){payload.invite=(document.getElementById('authInvite').value||'').trim();payload.bootstrap=(document.getElementById('authSetup').value||'').trim();payload.terms_version='v1';}
+  try{
+    const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok){authMsg(j.error||'Could not sign in.');return;}
+    TOKEN=j.token; try{localStorage.setItem('bv_tok',j.token);}catch(e){} loginAs(j.email,j.role,{});
+  }catch(e){authMsg('Network error — try again.');}
+}
+async function authSubmit(){
+  const email=(document.getElementById('authEmail').value||'').trim().toLowerCase();
+  const pw=document.getElementById('authPass').value||'';
+  if(!/.+@.+\..+/.test(email)){authMsg('Enter a valid email.');return;}
+  if(SERVER){ await authServer(email,pw); return; }
+  if(authMode==='signup'){
+    if(pw.length<8){authMsg('Password must be 8+ characters.');return;}
+    if(!document.getElementById('authAgree').checked){authMsg('Please accept the terms to continue.');return;}
+    if(await accGet(email)){authMsg('That account exists — sign in instead.');return;}
+    const existing=await accKeys(); const invites=await inviteList();
+    const code=(document.getElementById('authInvite').value||'').trim();
+    if(existing.length>0){ // after the first account, an invite is required in this offline demo
+      const inv=invites[email];
+      if(!inv || (inv.code && code && inv.code!==code)){authMsg('This email needs an invite from an admin.');return;}
+    }
+    const role=existing.length===0?'admin':'user';
+    const salt=crypto.getRandomValues(new Uint8Array(16)); const hash=await pbkdf2bits(pw,salt);
+    await accPut(email,{email,salt:Array.from(salt),hash,role,keys:{or:null,fw:null,tg:null},created:Date.now()});
+    if(invites[email]){invites[email].used=true;await metaPut('invites',invites);}
+    loginAs(email,role,{});
+  } else {
+    const a=await accGet(email);
+    if(!a){authMsg('No account, or wrong password.');return;}
+    const hash=await pbkdf2bits(pw,new Uint8Array(a.salt));
+    if(!ctEq(hash,a.hash)){authMsg('No account, or wrong password.');return;}
+    loginAs(email,a.role,a.keys||{});
+  }
+}
+async function ssoSignin(provider){
+  if(SERVER){ location.href='/auth/'+provider.toLowerCase()+'/start'; return; }
+  const email=(document.getElementById('authEmail').value||'').trim().toLowerCase();
+  if(!/.+@.+\..+/.test(email)){authMsg('Enter your '+provider+' email above, then tap the button. (Real '+provider+' verification activates once Bevins is on its server.)');return;}
+  let a=await accGet(email); const existing=await accKeys();
+  if(!a){
+    if(existing.length>0){const invites=await inviteList();if(!invites[email]){authMsg('This email needs an invite first.');return;}}
+    const role=existing.length===0?'admin':'user';
+    a={email,salt:[],hash:[],role,sso:provider,keys:{or:null,fw:null,tg:null},created:Date.now()};
+    await accPut(email,a);
+  }
+  loginAs(email,a.role,a.keys||{});
+}
+function vaultKey(){return 'vault:'+((CURRENT_USER&&CURRENT_USER.email)||'anon');}
+function loginAs(email,role,keys){
+  CURRENT_USER={email,role};
+  KEYS.or=(keys&&keys.or)||null;KEYS.fw=(keys&&keys.fw)||null;KEYS.tg=(keys&&keys.tg)||null;
+  loadModels();                                                  // pull the REAL available roster for the bandit
+  phr={key:null,records:[],unlocked:false,salt:null};          // per-user health, reset
+  for(const k in PICKS)delete PICKS[k];                          // per-user router memory, reset
+  feed.innerHTML='<div class="empty" id="emptyState">👋 Welcome, '+esc(email)+' — this is your account. Ask anything.</div>';
+  document.getElementById('authGate').classList.remove('show');
+  document.getElementById('who').textContent=email+(role==='admin'?' · admin':'');
+  document.getElementById('adminInvite').style.display=role==='admin'?'inline-block':'none';
+  document.getElementById('logoutBtn').style.display='inline-block';
+  document.getElementById('authEmail').value='';document.getElementById('authPass').value='';
+  updateMode();
+}
+function sessionExpired(){TOKEN=null;try{localStorage.removeItem('bv_tok');}catch(e){}CURRENT_USER=null;
+  document.getElementById('authGate')&&document.getElementById('authGate').classList.add('show');
+  try{authMsg('Your session expired — please sign in again.');}catch(e){}}
+function logout(){if(SERVER&&TOKEN){fetch('/api/logout',{method:'POST',headers:{'Authorization':'Bearer '+TOKEN}}).catch(()=>{});}TOKEN=null;try{localStorage.removeItem('bv_tok');}catch(e){}CURRENT_USER=null;KEYS.or=KEYS.fw=KEYS.tg=null;phr={key:null,records:[],unlocked:false,salt:null};
+  document.getElementById('who').textContent='';document.getElementById('logoutBtn').style.display='none';
+  document.getElementById('adminInvite').style.display='none';document.getElementById('authGate').classList.add('show');
+  updateMode();}
+async function persistKeys(){if(!CURRENT_USER)return;const a=await accGet(CURRENT_USER.email);if(a){a.keys={or:KEYS.or,fw:KEYS.fw,tg:KEYS.tg};await accPut(CURRENT_USER.email,a);}}
+function openInvite(){document.getElementById('inviteModal').classList.add('open');renderInvites();}
+async function makeInvite(){
+  const email=(document.getElementById('inviteEmail').value||'').trim().toLowerCase();
+  if(!/.+@.+\..+/.test(email)){document.getElementById('inviteOut').textContent='Enter a valid email.';return;}
+  if(SERVER){const r=await fetch('/api/invite',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},body:JSON.stringify({email})});const j=await r.json().catch(()=>({}));if(!r.ok){document.getElementById('inviteOut').textContent=j.error||'Could not invite.';return;}document.getElementById('inviteOut').innerHTML='✓ Invited <b>'+esc(email)+'</b>. Give them this invite code: <b>'+esc(j.code)+'</b> — they sign up with their email + this code and get their own private space.';document.getElementById('inviteEmail').value='';return;}
+  const invites=await inviteList(); const code=Math.random&&false?'' : (Date.now().toString(36).slice(-6));
+  invites[email]={code,by:CURRENT_USER&&CURRENT_USER.email,used:false}; await metaPut('invites',invites);
+  document.getElementById('inviteOut').innerHTML='✓ Invited <b>'+esc(email)+'</b>. They create an account with this email and invite code <b>'+esc(code)+'</b> — they get their own private space.';
+  document.getElementById('inviteEmail').value='';renderInvites();
+}
+async function renderInvites(){const invites=await inviteList();const el=document.getElementById('inviteList');
+  const ents=Object.entries(invites);el.innerHTML=ents.length?('Invited: '+ents.map(([e,v])=>esc(e)+(v.used?' ✓ joined':' · pending')).join(' · ')):'';}
+function showGate(){document.getElementById('authGate').classList.add('show');}
+
+// ---------------- wiring ----------------
+sendBtn.onclick=send;
+input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}});
+input.addEventListener('input',()=>{input.style.height='auto';input.style.height=Math.min(input.scrollHeight,130)+'px';});
+document.getElementById('fileInput').addEventListener('change',e=>{handleFile(e.target.files[0]);e.target.value='';});
+// drag & drop a file anywhere onto the chat
+feed.addEventListener('dragover',e=>{e.preventDefault();});
+feed.addEventListener('drop',e=>{e.preventDefault();if(e.dataTransfer.files&&e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0]);});
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;document.getElementById('install').style.display='inline-block';});
+document.getElementById('install').onclick=async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();deferredPrompt=null;document.getElementById('install').style.display='none';};
+async function initServer(){
+  try{const r=await fetch('/api/me');SERVER=(r.status===401||r.status===200);}catch(e){SERVER=false;}
+  const h=location.hash||'';
+  if(SERVER&&h.indexOf('sso_token=')>=0){TOKEN=h.split('sso_token=')[1];history.replaceState(null,'','/');
+    try{localStorage.setItem('bv_tok',TOKEN);}catch(e){}
+    try{const j=await(await fetch('/api/me',{headers:{'Authorization':'Bearer '+TOKEN}})).json();if(j&&j.email){loginAs(j.email,j.role,{});return;}}catch(e){}}
+  if(SERVER&&h.indexOf('sso_error=')>=0){document.getElementById('tabSignin')&&authMsg('Sign-in issue ('+h.split('sso_error=')[1]+'). Try again.');}
+  // restore a saved session so users aren't forced to sign in on every reload / PWA relaunch
+  if(SERVER){try{const stored=localStorage.getItem('bv_tok');
+    if(stored){const mr=await fetch('/api/me',{headers:{'Authorization':'Bearer '+stored}});
+      if(mr.ok){const j=await mr.json();if(j&&j.email){TOKEN=stored;loginAs(j.email,j.role,{});return;}}
+      localStorage.removeItem('bv_tok');}   // stale/expired token
+  }catch(e){}}
+  showGate();
+}
+initServer();
+// keyboard accessibility: make ✕/toggle controls focusable, Escape closes any open modal, Enter/Space activates
+try{document.querySelectorAll('.close,.tctoggle').forEach(el=>{el.setAttribute('tabindex','0');el.setAttribute('role','button');});}catch(e){}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){document.querySelectorAll('.modal.open').forEach(m=>m.classList.remove('open'));return;}
+  if((e.key==='Enter'||e.key===' ')&&e.target&&e.target.classList&&(e.target.classList.contains('close')||e.target.classList.contains('tctoggle'))){e.preventDefault();e.target.click();}
+});
+if('serviceWorker' in navigator){
+  try{navigator.serviceWorker.register('/sw.js').then(function(reg){if(reg&&reg.update)try{return reg.update();}catch(e){}}).catch(()=>{});
+  // if a newer worker takes control (e.g. after an update purges a stale iOS shell), reload ONCE to
+  // pick up the fresh HTML instead of leaving the user on an old cached build.
+  var _bvReloaded=false;navigator.serviceWorker.addEventListener('controllerchange',function(){if(_bvReloaded)return;_bvReloaded=true;location.reload();});
+  }catch(e){}}
+
+// small transient, screen-reader-announced hint (used by voice + could be reused)
+function micHint(t){
+  var el=document.getElementById('bvHintBox');
+  if(!el){ el=document.createElement('div'); el.id='bvHintBox'; el.setAttribute('role','status'); el.setAttribute('aria-live','assertive');
+    el.style.cssText='position:fixed;left:50%;bottom:84px;transform:translateX(-50%);max-width:90%;background:var(--panel2);color:var(--text);border:1px solid var(--accent);border-radius:10px;padding:.6rem .9rem;font-size:.9rem;z-index:9999;box-shadow:0 6px 24px rgba(0,0,0,.35)'; document.body.appendChild(el); }
+  el.textContent=t; el.style.display='block'; clearTimeout(el._t); el._t=setTimeout(function(){el.style.display='none';},6500);
+}
+// ---------------- voice input (speak instead of type) ----------------
+// Uses the browser's built-in speech recognition (on-device, no server, no cost). Shows the mic only where
+// supported and degrades silently everywhere else. Dictates into the box; the user reviews, then sends —
+// so nothing is sent by accident. The whole point: someone who hates typing can just talk.
+(function(){
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var micBtn = document.getElementById('micBtn');
+  if(!SR || !micBtn){ return; }            // unsupported → leave mic hidden, keyboard dictation still works
+  micBtn.style.display = '';               // reveal it
+  var rec=null, listening=false, baseText='';
+  function stop(){ try{ if(rec) rec.stop(); }catch(e){} listening=false; micBtn.classList.remove('listening'); micBtn.textContent='🎤'; }
+  window.toggleMic = function(){
+    if(listening){ stop(); return; }
+    try{
+      rec = new SR();
+      rec.lang = (navigator.language || 'en-US');
+      rec.interimResults = true;
+      rec.continuous = false;
+      baseText = (input.value || '').replace(/\s+$/,'');
+      rec.onresult = function(ev){
+        var txt='';
+        for(var i=ev.resultIndex; i<ev.results.length; i++){ txt += ev.results[i][0].transcript; }
+        input.value = (baseText ? baseText + ' ' : '') + txt;
+        input.style.height='auto'; input.style.height=Math.min(input.scrollHeight,130)+'px';
+        if(ev.results[ev.results.length-1].isFinal){ baseText = input.value.replace(/\s+$/,''); }
+      };
+      rec.onerror = function(ev){
+        var e=(ev&&ev.error)||'';
+        var msg = (e==='not-allowed'||e==='service-not-allowed') ? 'To use voice, allow the microphone: iPhone Settings → Safari → Microphone, then tap the mic again.'
+          : (e==='no-speech') ? "I didn't hear anything — tap the mic and speak."
+          : (e==='audio-capture') ? "I can't reach a microphone on this device."
+          : (e==='network') ? 'Voice needs an internet connection right now.'
+          : (e==='aborted') ? '' : 'Voice input had a hiccup — try again, or just type.';
+        stop(); if(msg) micHint(msg);
+      };
+      rec.onend = function(){ stop(); input.focus(); };
+      rec.start();
+      listening=true; micBtn.classList.add('listening'); micBtn.textContent='⏺'; micBtn.title='Listening… tap to stop';
+    }catch(e){ stop(); }
+  };
+})();
+</script>
+</body>
+</html>

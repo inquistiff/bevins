@@ -1,0 +1,25 @@
+# secrets & local config
+.env
+*.env
+!*.env.example
+!.env.example
+fernet.key
+sso.json
+creds/
+creds.src/
+*.pem
+*.key
+# runtime data
+llm-matrix.json
+audit/
+*.sqlite3
+test-results.json
+*.log
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+# os
+.DS_Store
