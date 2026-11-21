@@ -14,7 +14,7 @@ MarkupSafe==3.0.4
 # Keep these two on the same release. psycopg 3.3.8 calls the C wait_c()
 # from psycopg-binary with a timeout argument. The 3.3.4 wheel's wait_c()
 # does not accept it, so every connection fails.
-psycopg==3.3.8
+psycopg==3.3.9
 psycopg-binary==3.3.8
 pycparser==3.12
 PyJWT==2.15.0
